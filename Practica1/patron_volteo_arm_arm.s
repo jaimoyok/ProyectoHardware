@@ -13,7 +13,9 @@ patron_volteo_arm_arm
         PUSH{fp}
         mov fp,sp
 		PUSH {r4-r10}		;guardo los registros que voy a utilizar
-        
+        ldr r4, [fp,#8]
+        ldr r5, [fp, #12]
+        ldr r6, [fp,#16]
 
 
 
@@ -87,8 +89,8 @@ end_while
 		movls r0, #1
 
 els		str r10, [r7] ; Se guarda la longitud
-		POP {r7,r10}
-		POP {pc}
+		POP {r4-r10}
+		POP {fp,pc}
 	
 //POPs
 

@@ -8,10 +8,12 @@ patron_volteo_arm
 ;r0 = *tablero, r1 = *longitud, r2 = FA, r3 = CA, 
 ;r4 = SF, r5 = SC, r6 = color
 		PUSH {lr}
-		PUSH {fp}
-		mov fp,sp
-		sub sp,sp,#4			;reservamos espacio para posicion_valida
-		PUSH {r7-r10}		;guardo los registros que voy a utilizar
+        PUSH {fp}
+        mov fp,sp
+		PUSH {r4-r10}		;guardo los registros que voy a utilizar
+        ldr r4, [fp,#8]
+        ldr r5, [fp, #12]
+        ldr r6, [fp,#16]
 		;recoloco las variables
 		;r1 = FA, r2 = CA, r7 = *longitud 
 		mov r7,r1
