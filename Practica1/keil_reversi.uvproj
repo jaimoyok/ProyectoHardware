@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>0</interw>
-            <Optim>4</Optim>
+            <Optim>0</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -450,6 +450,11 @@
               <FileName>reversi8.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\reversi8.c</FilePath>
+            </File>
+            <File>
+              <FileName>patron_volteo_arm_c.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\patron_volteo_arm_c.s</FilePath>
             </File>
           </Files>
         </Group>
