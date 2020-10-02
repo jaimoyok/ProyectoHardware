@@ -1,34 +1,32 @@
 
 	PRESERVE8
 	AREA codigo, CODE, READONLY
-	EXPORT patron_volteo_arm
+	EXPORT patron_volteo_arm_c
 	IMPORT ficha_valida
 
-patron_volteo_arm
+patron_volteo_arm_c
 ;r0 = *tablero, r1 = *longitud, r2 = FA, r3 = CA, 
 ;r4 = SF, r5 = SC, r6 = color
-		PUSH {lr}
-        PUSH {fp}
+		PUSH {lr,fp}
         mov fp,sp
 		PUSH {r4-r10}		;guardo los registros que voy a utilizar
-        ldr r4, [fp,#8]
-        ldr r5, [fp, #12]
-        ldr r6, [fp,#16]
+		add r4,fp, #8	;se fija el registro en el primer parametro de la pila
+        ldm r4,{r4-r6}	;se hace una lectura m�ltiple de los 3 parametros
 		;recoloco las variables
 		;r1 = FA, r2 = CA, r7 = *longitud 
 		mov r7,r1
 		mov r1,r2
 		mov r2,r3
 
-		add r3,sp,#4		;r3 = *posicion valida
+		add r3,sp,#4		;r3 = *posicion valida	!!Ojo con esto
 		add r1,r1,r4		;FA = FA + SF
 		add r2,r2,r5		;CA = CA + SC
 
 		;casilla = r8 = ficha_valida(tablero, FA, CA, &posicion_valida)
-		PUSH{r0-r3}
+		PUSH {r0-r3}
 		bl ficha_valida 
-		mov r0,r8 
-		POP{r0-r3}	
+		mov r8,r0 
+		POP {r0-r3}	
 		
 		ldr r9, [r7] ; r9 =longitud
 while 	ldr r10, [r3] ; r3= posicion_valida
@@ -41,10 +39,10 @@ while 	ldr r10, [r3] ; r3= posicion_valida
 		add r9, r9, #1		; logitud ++
 
 		;casilla = r8 = ficha_valida(tablero, FA, CA, &posicion_valida)
-		PUSH{r0-r3}
+		PUSH {r0-r3}
 		bl ficha_valida 
-		mov r0,r8 
-		POP{r0-r3}
+		mov r8,r0 
+		POP {r0-r3}
 
 		b while
 
@@ -59,8 +57,5 @@ end_while
 		movls r0, #1
 
 _else	str r10, [r7] ; Se guarda la longitud
-		add sp,sp,#4			;reservamos espacio para posicion_valida
-		POP {r7-r10}
-		POP {fp}
-		POP {pc}
+		POP {r4-r10,fp,pc}
     END 

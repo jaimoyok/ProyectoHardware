@@ -187,7 +187,7 @@ char ficha_valida(char tablero[][DIM], char f, char c, int *posicion_valida)
     return ficha;
 }
 // ejemplo de declaraci�n de una funci�n definida externamente:
-extern int patron_volteo_arm(char tablero[][8], int *longitud,char f, char c, char SF, char SC, char color);
+extern int patron_volteo_arm_c(char tablero[][8], int *longitud,char f, char c, char SF, char SC, char color);
 ////////////////////////////////////////////////////////////////////////////////
 // La funci�n patr�n volteo comprueba si hay que actualizar una determinada direccion,
 // busca el patr�n de volteo (n fichas del rival seguidas de una ficha del jugador actual)
@@ -248,14 +248,14 @@ int actualizar_tablero(char tablero[][DIM], char f, char c, char color)
 {
     char SF, SC; // cantidades a sumar para movernos en la direcci�n que toque
     int i, flip, patron;
-
+    
     for (i = 0; i < DIM; i++) // 0 es Norte, 1 NE, 2 E ...
     {
         SF = vSF[i];
         SC = vSC[i];
         // flip: numero de fichas a voltear
         flip = 0;
-        patron = patron_volteo_arm(tablero, &flip, f, c, SF, SC, color); //patron_volteo(tablero, &flip, f, c, SF, SC, color);
+        patron = patron_volteo_arm_c(tablero, &flip, f, c, SF, SC, color); //patron_volteo(tablero, &flip, f, c, SF, SC, color);
         //printf("Flip: %d \n", flip);
         if (patron == PATRON_ENCONTRADO )
         {
@@ -306,7 +306,7 @@ int elegir_mov(char candidatas[][DIM], char tablero[][DIM], char *f, char *c)
 
                         // nos dice qu� hay que voltear en cada direcci�n
                         longitud = 0;
-                        patron = patron_volteo_arm(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); //patron_volteo(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA);
+                        patron = patron_volteo_arm_c(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); //patron_volteo(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA);
                         //  //printf("%d ", patron);
                         if (patron == PATRON_ENCONTRADO)
                         {
@@ -463,7 +463,3 @@ void reversi8()
     }
     contar(tablero, &blancas, &negras);
 }
- /*int main (){
-     printf("%d", tablero);
- }
-*/
