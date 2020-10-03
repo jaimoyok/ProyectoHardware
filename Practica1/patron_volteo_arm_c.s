@@ -9,16 +9,20 @@ patron_volteo_arm_c
 ;r4 = SF, r5 = SC, r6 = color
 		PUSH {lr,fp}
         mov fp,sp
+		sub sp, sp, #4
 		PUSH {r4-r10}		;guardo los registros que voy a utilizar
-		add r4,fp, #8	;se fija el registro en el primer parametro de la pila
+		add r6,fp,#8	;se fija el registro en el primer parametro de la pila
         ldm r4,{r4-r6}	;se hace una lectura m�ltiple de los 3 parametros
+		ldrsb r4,[r6],#4
+		ldrsb r5,[r6],#4
+		ldrsb r6,[r6]
 		;recoloco las variables
 		;r1 = FA, r2 = CA, r7 = *longitud 
 		mov r7,r1
 		mov r1,r2
 		mov r2,r3
 
-		add r3,sp,#4		;r3 = *posicion valida	!!Ojo con esto
+		sub r3,fp,#4		;r3 = *posicion valida
 		add r1,r1,r4		;FA = FA + SF
 		add r2,r2,r5		;CA = CA + SC
 
@@ -54,8 +58,10 @@ end_while
 		cmp r8,r6	;casilla == color
 		bne _else
 		cmp r9, #0
-		movls r0, #1
+		movne r0, #1
 
 _else	str r10, [r7] ; Se guarda la longitud
-		POP {r4-r10,fp,pc}
+		POP {r4-r10}
+		add sp, sp, #4
+		POP{fp,pc}
     END 
