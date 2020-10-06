@@ -33,7 +33,7 @@ const char  CASILLA_OCUPADA = 2;
 // declaramos las siguientes tablas como globales para que sean m�s f�ciles visualizarlas en el simulador
 // __attribute__ ((aligned (8))): specifies a minimum alignment for the variable or structure field, measured in bytes, in this case 8 bytes
 
-static const char __attribute__ ((aligned (8))) tabla_valor[DIM][DIM] =
+static const int8_t __attribute__ ((aligned (8))) tabla_valor[DIM][DIM] =
 {
     {8,2,7,3,3,7,2,8},
     {2,1,4,4,4,4,1,2},
@@ -59,7 +59,7 @@ const int8_t vSC[DIM] = { 0, 1, 1, 1, 0,-1,-1,-1};
 ////////////////////////////////////////////////////////////////////
 // Tablero sin inicializar
 ////////////////////////////////////////////////////////////////////
-static char __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
+static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
@@ -74,7 +74,7 @@ static char __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
      // VARIABLES PARA INTERACCIONAR CON LA ENTRADA SALIDA
      // Pregunta: �hay que hacer algo con ellas para que esto funcione bien?
      // (por ejemplo a�adir alguna palabra clave para garantizar que la sincronizaci�n a trav�s de esa variable funcione)
-volatile static char fila=0,
+volatile static int8_t fila=0,
 	    columna=0,
 	    ready = 0;
 
@@ -82,7 +82,7 @@ volatile static char fila=0,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 0 indica CASILLA_VACIA, 1 indica FICHA_BLANCA y 2 indica FICHA_NEGRA
 // pone el tablero a cero y luego coloca las fichas centrales.
-void init_table(char tablero[][DIM], char candidatas[][DIM])
+void init_table(uint8_t tablero[][DIM], char candidatas[][DIM])
 {
     int i, j;
 
@@ -139,7 +139,7 @@ void init_table(char tablero[][DIM], char candidatas[][DIM])
 // CUIDADO: si el compilador coloca esta variable en un registro, no funcionar�.
 // Hay que definirla como "volatile" para forzar a que antes de cada uso la cargue de memoria
 
-void esperar_mov(volatile char *ready)
+void esperar_mov(volatile int8_t *ready)
 {
     while (*ready == 0) {};  // bucle de espera de respuestas hasta que el se modifique el valor de ready (hay que hacerlo manualmente)
 
@@ -166,7 +166,7 @@ void esperar_mov(volatile char *ready)
 // Adem�s informa si la posici�n es v�lida y contiene alguna ficha.
 // Esto lo hace por referencia (en *posicion_valida)
 // Si devuelve un 0 no es v�lida o est� vacia.
-char ficha_valida(char tablero[][DIM], char f, char c, int *posicion_valida)
+char ficha_valida(uint8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_valida)
 {
     char ficha;
 
@@ -187,7 +187,7 @@ char ficha_valida(char tablero[][DIM], char f, char c, int *posicion_valida)
     return ficha;
 }
 // ejemplo de declaraci�n de una funci�n definida externamente:
-extern int patron_volteo_arm_c(char tablero[][8], int *longitud,char f, char c, char SF, char SC, char color);
+extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, int8_t f, int8_t c, int8_t SF, int8_t SC, char color);
 ////////////////////////////////////////////////////////////////////////////////
 // La funci�n patr�n volteo comprueba si hay que actualizar una determinada direccion,
 // busca el patr�n de volteo (n fichas del rival seguidas de una ficha del jugador actual)
@@ -198,7 +198,7 @@ extern int patron_volteo_arm_c(char tablero[][8], int *longitud,char f, char c, 
 // FA y CA son la fila y columna a analizar
 // longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
 //          Se usa para saber cuantas fichas habr�a que voltear
-int patron_volteo(char tablero[][DIM], int *longitud, char FA, char CA, char SF, char SC, char color)
+int patron_volteo(uint8_t tablero[][DIM], int *longitud, char FA, char CA, char SF, char SC, char color)
 {
 	int posicion_valida; // indica si la posici�n es valida y contiene una ficha de alg�n jugador
 	char casilla;   // casilla es la casilla que se lee del tablero
@@ -227,7 +227,7 @@ int patron_volteo(char tablero[][DIM], int *longitud, char FA, char CA, char SF,
 // SF y SC son las cantidades a sumar para movernos en la direcci�n que toque
 // color indica el color de la pieza que se acaba de colocar
 // FA y CA son la fila y columna a analizar
-void voltear(char tablero[][DIM], char FA, char CA, char SF, char SC, int n, char color)
+void voltear(uint8_t tablero[][DIM], char FA, char CA, char SF, char SC, int n, char color)
 {
     int i;
 
@@ -244,7 +244,7 @@ void voltear(char tablero[][DIM], char FA, char CA, char SF, char SC, int n, cha
 // f y c son la fila y columna a analizar
 // char vSF[DIM] = {-1,-1, 0, 1, 1, 1, 0,-1};
 // char vSC[DIM] = { 0, 1, 1, 1, 0,-1,-1,-1};
-int actualizar_tablero(char tablero[][DIM], char f, char c, char color)
+int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
 {
     char SF, SC; // cantidades a sumar para movernos en la direcci�n que toque
     int i, flip, patron;
@@ -255,7 +255,7 @@ int actualizar_tablero(char tablero[][DIM], char f, char c, char color)
         SC = vSC[i];
         // flip: numero de fichas a voltear
         flip = 0;
-        patron = patron_volteo_arm_c(tablero, &flip, f, c, SF, SC, color); 
+        patron = patron_volteo_arm_arm(tablero, &flip, f, c, SF, SC, color); 
         //patron_volteo(tablero, &flip, f, c, SF, SC, color);
         //printf("Flip: %d \n", flip);
         if (patron == PATRON_ENCONTRADO )
@@ -276,7 +276,7 @@ int actualizar_tablero(char tablero[][DIM], char f, char c, char color)
 // NO    0
 // SI    1
 // CASILLA_OCUPADA 2
-int elegir_mov(char candidatas[][DIM], char tablero[][DIM], char *f, char *c)
+int elegir_mov(char candidatas[][DIM], uint8_t tablero[][DIM], char *f, char *c)
 {
     int i, j, k, found;
     int mf = -1; // almacena la fila del mejor movimiento encontrado
@@ -307,7 +307,7 @@ int elegir_mov(char candidatas[][DIM], char tablero[][DIM], char *f, char *c)
 
                         // nos dice qu� hay que voltear en cada direcci�n
                         longitud = 0;
-                        patron = patron_volteo_arm_c(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); 
+                        patron = patron_volteo_arm_arm(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); 
                         //patron_volteo(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA);
                         //  //printf("%d ", patron);
                         if (patron == PATRON_ENCONTRADO)
@@ -335,7 +335,7 @@ int elegir_mov(char candidatas[][DIM], char tablero[][DIM], char *f, char *c)
 ////////////////////////////////////////////////////////////////////////////////
 // Cuenta el n�mero de fichas de cada color.
 // Los guarda en la direcci�n b (blancas) y n (negras)
-void contar(char tablero[][DIM], int *b, int *n)
+void contar(uint8_t tablero[][DIM], int *b, int *n)
 {
     int i,j;
 

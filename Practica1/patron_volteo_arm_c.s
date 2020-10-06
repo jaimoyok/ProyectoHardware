@@ -11,11 +11,8 @@ patron_volteo_arm_c
         mov fp,sp
 		sub sp, sp, #4
 		PUSH {r4-r10}		;guardo los registros que voy a utilizar
-		add r6,fp,#8	;se fija el registro en el primer parametro de la pila
+		add r4,fp,#8	;se fija el registro en el primer parametro de la pila
         ldm r4,{r4-r6}	;se hace una lectura m�ltiple de los 3 parametros
-		ldrsb r4,[r6],#4
-		ldrsb r5,[r6],#4
-		ldrsb r6,[r6]
 		;recoloco las variables
 		;r1 = FA, r2 = CA, r7 = *longitud 
 		mov r7,r1
