@@ -59,7 +59,9 @@ const int8_t vSC[DIM] = { 0, 1, 1, 1, 0,-1,-1,-1};
 ////////////////////////////////////////////////////////////////////
 // Tablero sin inicializar
 ////////////////////////////////////////////////////////////////////
-static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
+
+
+/*static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
@@ -70,6 +72,7 @@ static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA}
 	    };
 
+*/
   ////////////////////////////////////////////////////////////////////
      // VARIABLES PARA INTERACCIONAR CON LA ENTRADA SALIDA
      // Pregunta: �hay que hacer algo con ellas para que esto funcione bien?
@@ -187,7 +190,8 @@ char ficha_valida(uint8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_vali
     return ficha;
 }
 // ejemplo de declaraci�n de una funci�n definida externamente:
-extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, int8_t f, int8_t c, int8_t SF, int8_t SC, char color);
+extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
+extern int patron_volteo_arm_c(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
 ////////////////////////////////////////////////////////////////////////////////
 // La funci�n patr�n volteo comprueba si hay que actualizar una determinada direccion,
 // busca el patr�n de volteo (n fichas del rival seguidas de una ficha del jugador actual)
@@ -198,7 +202,7 @@ extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, int8_t f, 
 // FA y CA son la fila y columna a analizar
 // longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
 //          Se usa para saber cuantas fichas habr�a que voltear
-int patron_volteo(uint8_t tablero[][DIM], int *longitud, char FA, char CA, char SF, char SC, char color)
+int patron_volteo_c_c(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
 {
 	int posicion_valida; // indica si la posici�n es valida y contiene una ficha de alg�n jugador
 	char casilla;   // casilla es la casilla que se lee del tablero
@@ -222,6 +226,17 @@ int patron_volteo(uint8_t tablero[][DIM], int *longitud, char FA, char CA, char 
 	else
 		return NO_HAY_PATRON; // si no hay que voltear no hay patr�n
 }
+
+
+int patron_volteo_test(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
+{   int longitud1 = 0;int longitud2 = 0;int longitud3 = 0;
+    int i = patron_volteo_c_c( tablero, &longitud1, FA, CA, SF, SC, color);
+    int j = patron_volteo_arm_c( tablero, &longitud2, FA, CA, SF, SC, color);
+    int k = patron_volteo_arm_arm( tablero, &longitud3, FA, CA, SF, SC, color);
+    while(i!=j | j!=k){}
+    while(longitud1 != longitud2 | longitud2 != longitud3){}
+    return i;
+}
 ////////////////////////////////////////////////////////////////////////////////
 // voltea n fichas en la direcci�n que toque
 // SF y SC son las cantidades a sumar para movernos en la direcci�n que toque
@@ -235,7 +250,7 @@ void voltear(uint8_t tablero[][DIM], char FA, char CA, char SF, char SC, int n, 
     {
         FA = FA + SF;
         CA = CA + SC;
-        tablero[FA][CA] = color;
+        tablero[FA][CA] = color; 
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,7 +270,7 @@ int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
         SC = vSC[i];
         // flip: numero de fichas a voltear
         flip = 0;
-        patron = patron_volteo_arm_arm(tablero, &flip, f, c, SF, SC, color); 
+        patron = patron_volteo_test(tablero, &flip, f, c, SF, SC, color); 
         //patron_volteo(tablero, &flip, f, c, SF, SC, color);
         //printf("Flip: %d \n", flip);
         if (patron == PATRON_ENCONTRADO )
@@ -265,6 +280,24 @@ int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
     }
     return 0;
 }
+
+void test (uint8_t tablero[][DIM]){
+		int i,j,k;
+    for( i = 0; i < DIM; i++){
+        for( j = 0; j < DIM; j++){
+            if(tablero[i][j] == FICHA_BLANCA){
+                for (k = 0; k < DIM; k++){
+                    int8_t SF = vSF[k];
+                    int8_t SC = vSC[k];
+                    // flip: numero de fichas a voltear
+                    int flip = 0;
+                    int patron = patron_volteo_test(tablero, &flip, i, j, SF, SC, FICHA_BLANCA);  
+                }
+            }
+        }
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // Recorre todo el tablero comprobando en cada posici�n si se puede mover
@@ -307,7 +340,7 @@ int elegir_mov(char candidatas[][DIM], uint8_t tablero[][DIM], char *f, char *c)
 
                         // nos dice qu� hay que voltear en cada direcci�n
                         longitud = 0;
-                        patron = patron_volteo_arm_arm(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); 
+                        patron = patron_volteo_test(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA); 
                         //patron_volteo(tablero, &longitud, i, j, SF, SC, FICHA_BLANCA);
                         //  //printf("%d ", patron);
                         if (patron == PATRON_ENCONTRADO)
@@ -406,8 +439,23 @@ void actualizar_candidatas(char candidatas[][DIM], char f, char c)
 // en esta versi�n el humano lleva negras y la m�quina blancas
 // no se comprueba que el humano mueva correctamente.
 // S�lo que la m�quina realice un movimiento correcto.
+
+static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
+	        {FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_BLANCA },
+	        {CASILLA_VACIA,FICHA_BLANCA ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA},
+	        {CASILLA_VACIA,FICHA_NEGRA  ,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA},
+	        {CASILLA_VACIA,FICHA_NEGRA  ,FICHA_NEGRA  ,FICHA_BLANCA ,FICHA_BLANCA ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
+	        {CASILLA_VACIA,FICHA_BLANCA ,FICHA_NEGRA  ,FICHA_BLANCA ,FICHA_NEGRA  ,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA},
+	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
+	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
+	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA}
+	    };
+
 void reversi8()
 {
+	test(tablero_test);
+}
+/*{
 
 	 ////////////////////////////////////////////////////////////////////
 	 // Tablero candidatas: se usa para no explorar todas las posiciones del tablero
@@ -464,4 +512,4 @@ void reversi8()
         }
     }
     contar(tablero, &blancas, &negras);
-}
+}*/

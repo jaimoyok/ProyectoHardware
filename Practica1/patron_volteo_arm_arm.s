@@ -33,7 +33,7 @@ patron_volteo_arm_arm
 		ldrge r8, [r0,r8]
 
 noValida
-		ldr r9, [r1] ; r9 =longitud
+		mov r9, #0 ; r9 =longitud = 0
 		
 		
 while 	cmp r8, #0   ;pocicion_valida = 1
@@ -66,8 +66,8 @@ end_while
 		cmp r9, #0
 		movne r0, #1
 
-_else	str r9, [r1] ; Se guarda la longitud
-		POP {r4-r9}
+		str r9, [r1] ; Se guarda la longitud
+_else	POP {r4-r9}
 		POP {fp}
 		mov pc,lr
     END 

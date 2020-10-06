@@ -29,7 +29,7 @@ patron_volteo_arm_c
 		mov r8,r0 
 		POP {r0-r3}	
 		
-		ldr r9, [r7] ; r9 =longitud
+		mov r9, #0 ; r9 =longitud = 0
 while 	ldr r10, [r3] ; r3= posicion_valida
 		cmp r10, #1   ;pocicion_valida = 1
 		bne end_while
@@ -57,8 +57,8 @@ end_while
 		cmp r9, #0
 		movne r0, #1
 
-_else	str r10, [r7] ; Se guarda la longitud
-		POP {r4-r10}
+		str r9, [r7] ; Se guarda la longitud
+_else	POP {r4-r10}
 		add sp, sp, #4
 		POP{fp,pc}
     END 
