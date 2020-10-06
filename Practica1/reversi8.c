@@ -234,7 +234,7 @@ int patron_volteo_test(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_
     int j = patron_volteo_arm_c( tablero, &longitud2, FA, CA, SF, SC, color);
     int k = patron_volteo_arm_arm( tablero, &longitud3, FA, CA, SF, SC, color);
     while(i!=j | j!=k){}
-    while(longitud1 != longitud2 | longitud2 != longitud3){}
+		if(i == 1)while(longitud1 != longitud2 | longitud2 != longitud3){}
     return i;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -282,6 +282,8 @@ int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
 }
 
 void test (uint8_t tablero[][DIM]){
+		/*int flip = 0;
+		int patron = patron_volteo_test(tablero,&flip,1,1,1,0, FICHA_BLANCA);*/
 		int i,j,k;
     for( i = 0; i < DIM; i++){
         for( j = 0; j < DIM; j++){
@@ -296,6 +298,7 @@ void test (uint8_t tablero[][DIM]){
             }
         }
     }
+	
 }
 
 

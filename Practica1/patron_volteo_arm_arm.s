@@ -29,8 +29,8 @@ patron_volteo_arm_arm
 		cmp r3, #DIM
 		bhs noValida
 		cmp r3, #0
-		addge r8, r2, r3, LSL #3
-		ldrge r8, [r0,r8]
+		addge r8, r3, r2, LSL #3
+		ldrbge r8, [r0,r8]
 
 noValida
 		mov r9, #0 ; r9 =longitud = 0
@@ -55,7 +55,7 @@ while 	cmp r8, #0   ;pocicion_valida = 1
 		cmp r3, #0
 		blt end_while
 		add r8, r3, r2 ,LSL #3
-		ldr r8, [r0,r8]
+		ldrb r8, [r0,r8]
 
 		b while
 
@@ -66,7 +66,7 @@ end_while
 		cmp r9, #0
 		movne r0, #1
 
-		str r9, [r1] ; Se guarda la longitud
+		strne r9, [r1] ; Se guarda la longitud
 _else	POP {r4-r9}
 		POP {fp}
 		mov pc,lr
