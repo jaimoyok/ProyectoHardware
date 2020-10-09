@@ -234,6 +234,7 @@ int patron_volteo_test(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_
     int k = patron_volteo_arm_arm( tablero, &longitud3, FA, CA, SF, SC, color);
     while(i!=j | j!=k){}
 		if(i == 1)while(longitud1 != longitud2 | longitud2 != longitud3){}
+		*longitud = longitud1;
     return i;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +443,7 @@ void actualizar_candidatas(char candidatas[][DIM], char f, char c)
 // no se comprueba que el humano mueva correctamente.
 // S�lo que la m�quina realice un movimiento correcto.
 
-static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
+/*static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	        {FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_BLANCA },
 	        {CASILLA_VACIA,FICHA_BLANCA ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA},
 	        {CASILLA_VACIA,FICHA_NEGRA  ,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA},
@@ -451,7 +452,7 @@ static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA}
-	    };
+	    };*/
 
 void reversi8()
 /*{
