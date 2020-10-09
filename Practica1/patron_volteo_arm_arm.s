@@ -9,10 +9,10 @@ DIM		EQU 	8
 patron_volteo_arm_arm
 ;r0 = *tablero, r1 = *longitud, r2 = FA, r3 = CA, 
 ;r4 = SF, r5 = SC, r6 = color
-		PUSH {fp}
-        mov fp,sp
+	
+		
 		PUSH {r4-r9}		;guardo los registros que voy a utilizar
-		add r4,fp,#4	;se fija el registro en el primer parametro de la pila
+		add r4, sp, #24 ;se fija el registro en el primer parametro de la pila			
         ldm r4,{r4-r6}	;se hace una lectura m?ltiple de los 3 parametros
 		
 ;r8 = casilla, no utilizamos posicion valida = (casilla > 0)
@@ -68,7 +68,6 @@ end_while
 
 		strne r9, [r1] ; Se guarda la longitud
 _else	POP {r4-r9}
-		POP {fp}
 		mov pc,lr
     END 
 		

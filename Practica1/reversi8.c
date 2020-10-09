@@ -60,8 +60,7 @@ const int8_t vSC[DIM] = { 0, 1, 1, 1, 0,-1,-1,-1};
 // Tablero sin inicializar
 ////////////////////////////////////////////////////////////////////
 
-
-/*static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
+static uint8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
@@ -72,7 +71,7 @@ const int8_t vSC[DIM] = { 0, 1, 1, 1, 0,-1,-1,-1};
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA}
 	    };
 
-*/
+
   ////////////////////////////////////////////////////////////////////
      // VARIABLES PARA INTERACCIONAR CON LA ENTRADA SALIDA
      // Pregunta: �hay que hacer algo con ellas para que esto funcione bien?
@@ -455,10 +454,11 @@ static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	    };
 
 void reversi8()
-{
-	test(tablero_test);
-}
 /*{
+	test(tablero_test);
+	return;
+}*/
+{
 
 	 ////////////////////////////////////////////////////////////////////
 	 // Tablero candidatas: se usa para no explorar todas las posiciones del tablero
@@ -515,4 +515,4 @@ void reversi8()
         }
     }
     contar(tablero, &blancas, &negras);
-}*/
+}
