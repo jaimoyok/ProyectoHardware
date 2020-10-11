@@ -270,7 +270,7 @@ int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
         SC = vSC[i];
         // flip: numero de fichas a voltear
         flip = 0;
-        patron = patron_volteo_test(tablero, &flip, f, c, SF, SC, color); 
+        patron = patron_volteo_c_c(tablero, &flip, f, c, SF, SC, color); 
         //patron_volteo(tablero, &flip, f, c, SF, SC, color);
         //printf("Flip: %d \n", flip);
         if (patron == PATRON_ENCONTRADO )
@@ -452,14 +452,15 @@ static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA},
 	        {CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA}
-	    };*/
+	    };
 
 void reversi8()
-/*{
+{
 	test(tablero_test);
 	test(tablero_test);
 	return;
 }*/
+void reversi8()
 {
 
 	 ////////////////////////////////////////////////////////////////////

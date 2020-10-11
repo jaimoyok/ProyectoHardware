@@ -167,6 +167,38 @@
           <ExecCommand></ExecCommand>
           <Expression>0x000000F8</Expression>
         </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>507</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>2208</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>\VBOXSVR\ProyectoHardware\Practicas\Practica1\\VBOXSVR\ProyectoHardware\Practicas\Practica1\reversi8.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>146</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>2092</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>\VBOXSVR\ProyectoHardware\Practicas\Practica1\\VBOXSVR\ProyectoHardware\Practicas\Practica1\reversi8.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\keil_reversi\/VBOXSVR/ProyectoHardware/Practicas/Practica1/reversi8.c\146</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
@@ -232,7 +264,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -247,7 +279,7 @@
         <aSer3>0</aSer3>
         <eProf>1</eProf>
         <aLa>0</aLa>
-        <aPa1>0</aPa1>
+        <aPa1>1</aPa1>
         <AscS4>0</AscS4>
         <aSer4>0</aSer4>
         <StkLoc>0</StkLoc>
@@ -357,6 +389,18 @@
       <bDave2>0</bDave2>
       <PathWithFileName>.\patron_volteo_arm_c.s</PathWithFileName>
       <FilenameWithoutPath>patron_volteo_arm_c.s</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>6</FileNumber>
+      <FileType>2</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\patron_volteo_arm_arm.s</PathWithFileName>
+      <FilenameWithoutPath>patron_volteo_arm_arm.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
