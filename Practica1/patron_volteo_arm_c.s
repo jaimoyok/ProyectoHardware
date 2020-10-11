@@ -30,9 +30,8 @@ patron_volteo_arm_c
 		POP {r0-r3}	
 		
 		mov r9, #0 ; r9 =longitud = 0
-while 	ldr r10, [r3] ; r3= posicion_valida
-		cmp r10, #1   ;pocicion_valida = 1
-		bne end_while
+while 	cmp r8, #0
+		beq end_while
 		cmp r8,r6	;casilla != color
 		beq end_while
 		add r1,r1,r4		;FA = FA + SF
@@ -49,8 +48,6 @@ while 	ldr r10, [r3] ; r3= posicion_valida
 
 end_while 
 		mov r0, #0  ;r0 = NO_ENCONTRADO
-		ldr r10, [r3]
-		cmp r10, #1   ;pocicion_valida = 1
 		bne _else
 		cmp r8,r6	;casilla == color
 		bne _else

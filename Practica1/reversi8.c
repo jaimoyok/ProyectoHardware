@@ -442,8 +442,8 @@ void actualizar_candidatas(char candidatas[][DIM], char f, char c)
 // en esta versi�n el humano lleva negras y la m�quina blancas
 // no se comprueba que el humano mueva correctamente.
 // S�lo que la m�quina realice un movimiento correcto.
-
-/*static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
+/*
+static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	        {FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_BLANCA },
 	        {CASILLA_VACIA,FICHA_BLANCA ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA},
 	        {CASILLA_VACIA,FICHA_NEGRA  ,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA},
@@ -456,6 +456,7 @@ void actualizar_candidatas(char candidatas[][DIM], char f, char c)
 
 void reversi8()
 /*{
+	test(tablero_test);
 	test(tablero_test);
 	return;
 }*/
