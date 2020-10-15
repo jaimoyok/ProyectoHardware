@@ -201,7 +201,7 @@ extern int patron_volteo_arm_c(uint8_t tablero[][8], int *longitud, uint8_t f, u
 // FA y CA son la fila y columna a analizar
 // longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
 //          Se usa para saber cuantas fichas habr�a que voltear
-int patron_volteo_c_c(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
+int __attribute__ ((noinline)) patron_volteo_c_c(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
 {
 	int posicion_valida; // indica si la posici�n es valida y contiene una ficha de alg�n jugador
 	char casilla;   // casilla es la casilla que se lee del tablero
