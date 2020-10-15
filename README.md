@@ -6,16 +6,16 @@ Practicas, 5ºsemestre
 
 |Versión|Tiempo (us) | Nº Instrucciones | Tamaño (bytes)|
 |:--|:---:|:--:|:--:|
-|O0|9.967 + 4.700||52|
-|O0 -otime|9.967 + 4.700||52|
-|O1|8.933 + 3050||48|
-|O1 -otime|8.933 + 3050||48|
-|O2|8.017 + 3100||36|
-|O2-otime|8.017 + 0 ||60|
-|O3|8.017 + 3.100||36|
-|O3-otime|7.117 + 0||54|
-|arm_c|8.817 + ||38|
-|arm_arm|**6.900**|**83**|43 (incluye ficha_valida)|
+|O0|9.967 + 4.700||52||23|
+|O0 -otime|9.967 + 4.700||52||23|
+|O1|8.933 + 3050||48||17|
+|O1 -otime|8.933 + 3050||48||17|
+|O2|8.017 + 3100||36||16|
+|O2-otime|8.017 + 0 ||60||17|
+|O3|8.017 + 3.100||36||16|
+|O3-otime|7.117 + 0||54||17|
+|arm_c|8.817 + (depende de la optimizacion)||38||(depende de la optimizacion)|
+|arm_arm|**6.900**|**83**|43 (incluye ficha_valida)||0(no existe ficha_valida)|
 
 
 
