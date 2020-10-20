@@ -2,7 +2,7 @@
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 #include "timer0.h"
 #include "pulsacion.h"
-// variable para contabilizar el número de interrupciones
+// variable para contabilizar el nï¿½mero de interrupciones
 static volatile unsigned int timer0_int_count = 0;
 
 void timer0_ISR (void) __irq;    // Generate Interrupt 

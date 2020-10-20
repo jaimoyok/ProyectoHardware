@@ -1,6 +1,6 @@
                   
 #include <LPC210x.H>                       /* LPC210x definitions */
-#include "Timer.h"
+#include "timer.h"
 #include "Power_management.h"
 #include "boton_eint0.h"
 

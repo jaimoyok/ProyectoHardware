@@ -2,7 +2,7 @@
 #define __COLA__H
 #include "stdint.h"
 //tamnyo cola
-const int DIM = 32;
+enum{ DIM = 32;}
 
 
 struct Cola_Eventos{
@@ -13,8 +13,10 @@ struct Cola_Eventos{
     
 };
 
+static struct Cola_Eventos cola = colaEVacia();
 struct Cola_Eventos colaEVacia();
 int tamanyo(struct Cola_Eventos *c);
+uint8_t nuevoEvento(struct Cola_Eventos *c);
 uint8_t insertarEvento(struct Cola_Eventos *c, uint32_t evento, uint32_t time);
 void siguienteEvento(struct Cola_Eventos *c, uint8_t *evento, uint32_t *time);
 uint8_t avanzar(struct Cola_Eventos *c);

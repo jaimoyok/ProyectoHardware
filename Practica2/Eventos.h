@@ -7,8 +7,8 @@
 const char EVENTO1= 1;
 const char EVENTO2= 2;
    
-static struct Cola_Eventos cola = colaEVacia();
 
-uint8_t cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData);   
+
+
 
 #endif 
