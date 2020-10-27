@@ -9,7 +9,7 @@ void timer0_ISR (void) __irq;    // Generate Interrupt
 
 
 /* Setup the Timer Counter 0 Interrupt */
-void timer0_init (void) {
+void temporizador_iniciar (void) {
 		timer0_int_count = 0;	
 	// configuration of Timer 0
 		T0MR0 = 149999;                        // Interrumpe cada 0,05ms = 150.000-1 counts
@@ -20,9 +20,20 @@ void timer0_init (void) {
     // 0x20 bit 5 enables vectored IRQs. 
 		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0 (see table 40 of the LPC2105 user manual  
 		VICVectCntl0 = 0x20 | 4;                   
-    VICIntEnable = VICIntEnable | 0x00000010;                  // Enable Timer0 Interrupt
 }
 
+void temporizador_empezar(void) {
+  timer0_int_count = 0;
+  VICIntEnable = VICIntEnable | 0x00000010;                  // Enable Timer0 Interrupt
+}
+
+unsigned int temporizador_leer(void){
+	return timer0_int_count;
+};
+
+void temporizador_parar(void) {
+  VICIntEnClr = VICIntEnClr | 0x00000010;
+}
 
 /* Timer Counter 0 Interrupt executes each 10ms @ 60 MHz CPU Clock */
 void timer0_ISR (void) __irq {
@@ -31,7 +42,5 @@ void timer0_ISR (void) __irq {
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
 
-unsigned int timer0_read_int_count(void){
-	return timer0_int_count;
-};
+
 
