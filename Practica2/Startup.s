@@ -90,8 +90,8 @@ VPBDIV          EQU     0xE01FC100      ; VPBDIV Address
 ;//               <1=> XCLK Pin = CPU Clock
 ;//               <2=> XCLK Pin = CPU Clock / 2
 ;// </e>
-VPBDIV_SETUP    EQU     0
-VPBDIV_Val      EQU     0x00000000
+VPBDIV_SETUP    EQU     01
+VPBDIV_Val      EQU     0x00000001  
 
 
 ; Phase Locked Loop (PLL) definitions
