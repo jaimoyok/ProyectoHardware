@@ -1,9 +1,9 @@
 #include "boton_eint0.h"
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 
-// variable para comprobar que se hacen las interrupciones que deberían hacerse
+// variable para comprobar que se hacen las interrupciones que deberï¿½an hacerse
 static volatile unsigned int eint0_count = 0;
-// variable que se activa al detectar una nueva pulsación
+// variable que se activa al detectar una nueva pulsaciï¿½n
 static volatile int eint0_nueva_pulsacion = 0;
 
 void eint0_ISR (void) __irq {
@@ -26,9 +26,9 @@ unsigned int eint0_read_count(void){
 };
 
 void eint0_init (void) {
-// NOTA: según el manual se puede configurar cómo se activan las interrupciones: por flanco o nivel, alta o baja. 
-// Se usarían los registros EXTMODE y EXTPOLAR. 
-// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguración de EXT Interrupts
+// NOTA: segï¿½n el manual se puede configurar cï¿½mo se activan las interrupciones: por flanco o nivel, alta o baja. 
+// Se usarï¿½an los registros EXTMODE y EXTPOLAR. 
+// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguraciï¿½n de EXT Interrupts
 // configure EXTINT0 active if a rising-edge is detected
 //	EXTMODE 	=	1; //1 edge, 0 level
 //	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge

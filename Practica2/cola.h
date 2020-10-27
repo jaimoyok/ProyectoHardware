@@ -2,25 +2,18 @@
 #define __COLA__H
 #include "stdint.h"
 //tamnyo cola
-enum{ DIM = 32;}
 
+typedef struct {
+uint32_t id_aux;
+uint32_t timestamp;
+} elem_cola;
 
-struct Cola_Eventos{
-        uint8_t eventos[DIM];
-        uint32_t time[DIM];
-        int inicio,final,ultimoMirado;
-
-    
-};
-
-static struct Cola_Eventos cola = colaEVacia();
-struct Cola_Eventos colaEVacia();
-int tamanyo(struct Cola_Eventos *c);
-uint8_t nuevoEvento(struct Cola_Eventos *c);
-uint8_t insertarEvento(struct Cola_Eventos *c, uint32_t evento, uint32_t time);
-void siguienteEvento(struct Cola_Eventos *c, uint8_t *evento, uint32_t *time);
-uint8_t avanzar(struct Cola_Eventos *c);
-
+void cola_iniciar ();
+int tamanyo();
+uint8_t nuevoEvento();
+void siguienteEvento(uint32_t *data, uint8_t *evento, uint32_t *time);
+uint8_t avanzar();
+uint8_t cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData);
 
 
 #endif 
