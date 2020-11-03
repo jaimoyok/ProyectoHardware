@@ -5,3 +5,8 @@ void PM_power_down (void)  {
   EXTWAKE = 1; // EXTINT0 will awake the processor
 	PCON |= 0x02; 
 }
+
+void PM_idle(void) {
+  EXTWAKE = 1;
+  PCON |= 0x01;
+}

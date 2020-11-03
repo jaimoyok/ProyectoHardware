@@ -1,6 +1,6 @@
 #include "pulsacion.h"
 #include <LPC210x.H>                       /* LPC210x definitions */
-#include "botones_eint0.h"
+#include "boton_eint0.h"
 
 static unsigned int estado_pulsacion_0 = NO_PULSADO;
 
@@ -12,9 +12,10 @@ void clear_nueva_pulsacion_0(void){
 unsigned int nueva_pulsacion_0(void){
 	unsigned int new;
 	new = eint0_read_nueva_pulsacion();
-	eint0_clear_nueva_pulsacion(); // Las pulsaciones s�lo deben procesarse una vez. Por tanto se pone a 0 despu�s de leerlo
+	eint0_clear_nueva_pulsacion();		 // Las pulsaciones s�lo deben procesarse una vez. Por tanto se pone a 0 despu�s de leerlo
 	return new;
 }
+
 
 
 

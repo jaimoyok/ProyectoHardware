@@ -7,6 +7,8 @@ enum {
 
 unsigned int nueva_pulsacion_0(void);
 void clear_nueva_pulsacion_0(void);
+unsigned int nueva_pulsacion_1(void);
+void clear_nueva_pulsacion_1(void);
 //void actualizar_estado_0(void);
 //unsigned int leer_estado_0(void);
 
