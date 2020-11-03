@@ -1,6 +1,6 @@
                   
 #include <LPC210x.H>                       /* LPC210x definitions */
-#include "timer.h"
+#include "timer0.h"
 #include "Power_management.h"
 #include "boton_eint0.h"
 
@@ -8,8 +8,8 @@
 void wait (void)  {                         /* wait function */
   unsigned int i;
 
-  i = timer0_read_int_count(); // reads the number of previous timer IRQs
-  while ((i + 10) != timer0_read_int_count());              /* waits for 10 interrupts, i.e. 50ms */
+  i = temporizador_leer(); // reads the number of previous timer IRQs
+  while ((i + 10) != temporizador_leer());              /* waits for 10 interrupts, i.e. 50ms */
 }
 
 int main (void) {
@@ -27,7 +27,7 @@ int main (void) {
 		PM_power_down(); // de aquí sólo despertamos si hay pulsación
 		};	
 // bucle que realiza un blink de leds cada 50ms	   
-	timer0_init(); // generates an interrupt every 0,05ms and increments timeval0
+	temporizador_iniciar(); // generates an interrupt every 0,05ms and increments timeval0
 	while (1)  {                                  /* Loop forever */
     for (j = 0x010000; j < 0x800000; j <<= 1) { /* Blink LED 0,1,2,3,4,5,6 */
       // Nota la gestión del GPIO vosotros la debeís hacer en GPIO.c no en el main o en el reversi
