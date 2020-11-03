@@ -189,8 +189,7 @@ char ficha_valida(uint8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_vali
     return ficha;
 }
 // ejemplo de declaraci�n de una funci�n definida externamente:
-extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
-extern int patron_volteo_arm_c(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
+
 ////////////////////////////////////////////////////////////////////////////////
 // La funci�n patr�n volteo comprueba si hay que actualizar una determinada direccion,
 // busca el patr�n de volteo (n fichas del rival seguidas de una ficha del jugador actual)
@@ -201,6 +200,8 @@ extern int patron_volteo_arm_c(uint8_t tablero[][8], int *longitud, uint8_t f, u
 // FA y CA son la fila y columna a analizar
 // longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
 //          Se usa para saber cuantas fichas habr�a que voltear
+extern int patron_volteo_arm_arm(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
+extern int patron_volteo_arm_c(uint8_t tablero[][8], int *longitud, uint8_t f, uint8_t c, int8_t SF, int8_t SC, char color);
 int __attribute__ ((noinline)) patron_volteo_c_c(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
 {
 	int posicion_valida; // indica si la posici�n es valida y contiene una ficha de alg�n jugador
@@ -226,6 +227,15 @@ int __attribute__ ((noinline)) patron_volteo_c_c(uint8_t tablero[][DIM], int *lo
 		return NO_HAY_PATRON; // si no hay que voltear no hay patr�n
 }
 
+//patron volteo test ejecuta las tres versiones de patron volteo, comprueba si son igules los resultados
+//y devueve lo mismo que cuarquiera de las tres
+//si algun resultado no coincide bloquea al programa(while infinito)
+// SF y SC son las cantidades a sumar para movernos en la direcci�n que toque
+// color indica el color de la pieza que se acaba de colocar
+// la funci�n devuelve PATRON_ENCONTRADO (1) si encuentra patr�n y NO_HAY_PATRON (0) en caso contrario
+// FA y CA son la fila y columna a analizar
+// longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
+//          Se usa para saber cuantas fichas habr�a que voltear
 
 int patron_volteo_test(uint8_t tablero[][DIM], int *longitud, uint8_t FA, uint8_t CA, int8_t SF, int8_t SC, char color)
 {   int longitud1 = 0;int longitud2 = 0;int longitud3 = 0;
@@ -280,7 +290,9 @@ int actualizar_tablero(uint8_t tablero[][DIM], char f, char c, char color)
     }
     return 0;
 }
-
+//recorre el tablero <tablero> buscando fichas blancas,
+//cuando encuentra una llama a patron volteo test
+//tablero es un matriz 8*8 que representa un tablero de reversi8
 void test (uint8_t tablero[][DIM]){
 		/*int flip = 0;
 		int patron = patron_volteo_test(tablero,&flip,1,1,1,0, FICHA_BLANCA);*/
@@ -443,6 +455,9 @@ void actualizar_candidatas(char candidatas[][DIM], char f, char c)
 // no se comprueba que el humano mueva correctamente.
 // S�lo que la m�quina realice un movimiento correcto.
 /*
+
+//este tablero se utiliza para llamar a la funcion test
+//coniene varios patrones que sirven para comprobar la fiabilidad de la funcion patron volteo
 static uint8_t __attribute__ ((aligned (8))) tablero_test[DIM][DIM] = {
 	        {FICHA_NEGRA  ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_BLANCA },
 	        {CASILLA_VACIA,FICHA_BLANCA ,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,CASILLA_VACIA,FICHA_NEGRA  ,CASILLA_VACIA},
