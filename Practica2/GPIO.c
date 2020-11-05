@@ -18,13 +18,16 @@ int GPIO_leer(int bitInicial, int numBits) {
     }
     return aux;
 }
-
 void GPIO_escribir(int bitInicial, int numBits, int valor) {
     if (activado) {
-        valor <<= 32 - numBits; //Elimina los bits sobrantes de valor 
-        IOSET = valor >> (32 - bitInicial - numBits), //Escribe los bits de valor en la posicion dada
-        IOSET;
+        int aux = 0;
+        for (int i = 0; i < 32){
+         if (i >= bitInicial && i < bitInicial + numBits)aux += (0x1 << i);
+        }   
+        IOSET = aux;
     }
+    
+
 }
 
 //Los bits indicados se utilizaran como bits de entrada.
