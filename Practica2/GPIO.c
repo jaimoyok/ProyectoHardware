@@ -21,10 +21,9 @@ int GPIO_leer(int bitInicial, int numBits) {
 
 void GPIO_escribir(int bitInicial, int numBits, int valor) {
     if (activado) {
-        int aux = 0;
         valor <<= 32 - numBits; //Elimina los bits sobrantes de valor 
-        aux = valor >> (32 - bitInicial - numBits), //Escribe los bits de valor en la posicion dada
-        IOSET = aux;
+        IOSET = valor >> (32 - bitInicial - numBits), //Escribe los bits de valor en la posicion dada
+        IOSET;
     }
 }
 
