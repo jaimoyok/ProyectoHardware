@@ -10,13 +10,12 @@ void GPIO_iniciar(void) {
 }
 
 int GPIO_leer(int bitInicial, int numBits) {
-    uint32_t aux;
-    if(!activado)
-			return 0;
-		
-		aux = IOPIN;
-    aux = aux >> bitInicial; //Se eliminan los bits de la der.
-    aux = aux << (32 - numBits) >> (32 - numBits); //Se eliminan los bits de la izq.
+    uint32_t aux = 0;
+    if(activado) {
+        aux = IOPIN;
+        aux = aux >> bitInicial; //Se eliminan los bits de la der.
+        aux = aux << (32 - numBits) >> (32 - numBits); //Se eliminan los bits de la izq.
+    }
     return aux;
 }
 void GPIO_escribir(int bitInicial, int numBits, int valor) {
