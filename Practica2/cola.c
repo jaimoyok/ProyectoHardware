@@ -41,6 +41,9 @@ uint8_t nuevoEvento(){
     return cola.n == DIM;
 }
 void siguienteEvento(uint32_t *data, uint8_t *evento, uint32_t *time){
+    if(0 == cola.n) {
+    while(1);
+    }
     *evento =  cola.data[cola.head].id_aux >> 24;
     *time = cola.data[cola.head].timestamp;
     *data = cola.data[cola.head].id_aux & 0x00FFFFFF;

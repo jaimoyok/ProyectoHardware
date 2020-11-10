@@ -1,27 +1,28 @@
 #include "boton_eint1.h"
+#include "cola.h"
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 
-// variable para comprobar que se hacen las interrupciones que deber�an hacerse
-static volatile unsigned int eint1_count = 0;
 // variable que se activa al detectar una nueva pulsaci�n
 static volatile int eint1_nueva_pulsacion = 0;
 
-void eint0_ISR (void) __irq {
-	eint0_count++;
+void eint1_ISR (void) __irq {
+	VICIntEnable = VICIntEnClr | 0x00010000
+	cola_guardar_eventos(EV_BOTON,1);
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint0_nueva_pulsacion = 1;
 }
 
-void eint0_clear_nueva_pulsacion(void){
+void eint1_clear_nueva_pulsacion(void){
 	eint0_nueva_pulsacion = 0;
+	VICIntEnable = VICIntEnable | 0x00010000;
 };
 
-unsigned int eint0_read_nueva_pulsacion(void){
+unsigned int eint1_read_nueva_pulsacion(void){
 	return eint0_nueva_pulsacion;
 };
 
-unsigned int eint0_read_count(void){
+unsigned int eint1_read_count(void){
 	return eint0_count;
 };
 
@@ -34,7 +35,6 @@ void eint1_init (void) {
 //	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge
 //  prueba = EXTMODE;
 	eint0_nueva_pulsacion = 0;
-	eint0_count = 0;
 	EXTINT =  EXTINT | 1;        // clear interrupt flag     	
 	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
 	VICVectAddr2 = (unsigned long)eint0_ISR;          // set interrupt vector in 0

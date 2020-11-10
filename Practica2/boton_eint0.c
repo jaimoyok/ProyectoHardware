@@ -2,12 +2,12 @@
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 
 // variable para comprobar que se hacen las interrupciones que deber�an hacerse
-static volatile unsigned int eint0_count = 0;
 // variable que se activa al detectar una nueva pulsaci�n
 static volatile int eint0_nueva_pulsacion = 0;
 
 void eint0_ISR (void) __irq {
-	eint0_count++;
+	VICIntEnable = VICIntEnClr | 0x00004000 ;
+	cola_guardar_eventos(EV_BOTON,0);
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint0_nueva_pulsacion = 1;
@@ -15,14 +15,11 @@ void eint0_ISR (void) __irq {
 
 void eint0_clear_nueva_pulsacion(void){
 	eint0_nueva_pulsacion = 0;
+	VICIntEnable = VICIntEnable | 0x00004000;
 };
 
 unsigned int eint0_read_nueva_pulsacion(void){
 	return eint0_nueva_pulsacion;
-};
-
-unsigned int eint0_read_count(void){
-	return eint0_count;
 };
 
 void eint0_init (void) {

@@ -4,8 +4,11 @@
  #include "cola.h"
  #include "stdint.h"
 //definicion de eventos
-const char EVENTO1= 1;
-const char EVENTO2= 2;
+enum{
+    EV_TIMER0 = 0;
+    EV_TIMER1 = 1;
+    EV_BOTON = 2
+} ;
    
 
 
