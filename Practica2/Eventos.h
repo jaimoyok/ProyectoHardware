@@ -5,11 +5,13 @@
  #include "stdint.h"
 //definicion de eventos
 enum{
-    EV_TIMER0 = 0;
-    EV_TIMER1 = 1;
+    EV_TIMER0 = 0,
+    EV_TIMER1 = 1,
     EV_BOTON = 2
 } ;
    
+int leer_pulsaciones();
+void gestionar_eventos();
 
 
 

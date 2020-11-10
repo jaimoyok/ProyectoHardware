@@ -4,13 +4,14 @@
 #include "Power_management.h"
 #include "boton_eint0.h"
 #include "GPIO.h"
+#include "Eventos.h"
 
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 void wait (void)  {                         /* wait function */
   unsigned int i;
 
-  i = temporizador_leer(); // reads the number of previous timer IRQs
-  while ((i + 10) != temporizador_leer());              /* waits for 10 interrupts, i.e. 50ms */
+  i = temporizador0_leer(); // reads the number of previous timer IRQs
+  while ((i + 5) != temporizador0_leer());              /* waits for 10 interrupts, i.e. 50ms */
 }
 
 int main (void) {
@@ -25,12 +26,13 @@ int main (void) {
 	// bucle para comprobar el funcionamiento del bot�n. El objetivo es comprobar que se lleva bien la cuenta de pulsaciones
 	// con s�lo una interrupci�n EXTINT0 por pulsaci�n
 	// en este proyecto no va a funcionar porque la interrupci�n se activa por nivel y no se ha a�adido la gesti�n necesaria para ue s�lo interrumpa una vez.
-	while (eint0_read_count() < 4){
-		PM_power_down(); // de aqu� s�lo despertamos si hay pulsaci�n
+	temporizador0_iniciar();
+	while (1){
+		gestionar_eventos(); // de aqu� s�lo despertamos si hay pulsaci�n
 		};	
 // bucle que realiza un blink de leds cada 50ms	   
-	temporizador_iniciar(); // generates an interrupt every 0,05ms and increments timeval0
-	temporizador_empezar();
+	 // generates an interrupt every 0,05ms and increments timeval0
+	temporizador0_empezar();
 	while (1)  {                                  /* Loop forever */
     for (j = 16; j < 23; j++) { /* Blink LED 0,1,2,3,4,5,6 */
       // Nota la gesti�n del GPIO vosotros la debe�s hacer en GPIO.c no en el main o en el reversi

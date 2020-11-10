@@ -3,11 +3,6 @@
 #include "stdint.h"
 //tamnyo cola
 
-typedef struct {
-uint32_t id_aux;
-uint32_t timestamp;
-} elem_cola;
-
 void cola_iniciar ();
 int tamanyo();
 uint8_t nuevoEvento();

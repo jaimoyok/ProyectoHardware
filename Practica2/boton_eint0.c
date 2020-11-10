@@ -1,4 +1,6 @@
 #include "boton_eint0.h"
+#include "Eventos.h"
+#include "cola.h"
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 
 // variable para comprobar que se hacen las interrupciones que deber�an hacerse
@@ -6,7 +8,7 @@
 static volatile int eint0_nueva_pulsacion = 0;
 
 void eint0_ISR (void) __irq {
-	VICIntEnable = VICIntEnClr | 0x00004000 ;
+	VICIntEnClr = VICIntEnClr | 0x00004000 ;
 	cola_guardar_eventos(EV_BOTON,0);
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
@@ -31,7 +33,6 @@ void eint0_init (void) {
 //	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge
 //  prueba = EXTMODE;
 	eint0_nueva_pulsacion = 0;
-	eint0_count = 0;
 	EXTINT =  EXTINT | 1;        // clear interrupt flag     	
 	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
 	VICVectAddr2 = (unsigned long)eint0_ISR;          // set interrupt vector in 0

@@ -1,6 +1,7 @@
  #include "cola.h"
+ #include "timer0.h"
  #include "stdint.h"
-
+#include "stddef.h "
  enum{ DIM = 32};
 
 
@@ -14,13 +15,14 @@ elem_cola data[DIM];
 size_t head, tail, n;
 } cola_t;
 
-cola_t cola;
+volatile cola_t cola;
 
 //inicia cola
  void cola_iniciar(){
      cola.head = 0;
      cola.tail = 0;
-     cola.n = 0
+     cola.n = 0;
+		cola_guardar_eventos(0,0);
     }
 
 
@@ -38,7 +40,7 @@ uint8_t insertarEvento(elem_cola e){
     return 1;
 }
 uint8_t nuevoEvento(){
-    return cola.n == DIM;
+    return cola.n != 0;
 }
 void siguienteEvento(uint32_t *data, uint8_t *evento, uint32_t *time){
     if(0 == cola.n) {
@@ -58,7 +60,8 @@ uint8_t avanzar(){
   
 uint8_t cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
     elem_cola e;
-    e.timestamp = temporizador_leer();
+    //e.timestamp = temporizador0_leer();
+		e.timestamp = 0;
     e.id_aux = ID_evento << 24 | (auxData & 0x00FFFFFF) ;
     if(insertarEvento(e))return 1;
     return 0;
