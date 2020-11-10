@@ -32,16 +32,16 @@ int main (void) {
 	temporizador_iniciar(); // generates an interrupt every 0,05ms and increments timeval0
 	temporizador_empezar();
 	while (1)  {                                  /* Loop forever */
-    for (j = 0x010000; j < 0x800000; j <<= 1) { /* Blink LED 0,1,2,3,4,5,6 */
+    for (j = 16; j < 23; j++) { /* Blink LED 0,1,2,3,4,5,6 */
       // Nota la gesti�n del GPIO vosotros la debe�s hacer en GPIO.c no en el main o en el reversi
 	  GPIO_escribir(j,1,1); /* Turn on LED */
-      //wait ();                                  /* call wait function */
+      wait();                                  /* call wait function */
       GPIO_escribir(j,1,0);                               /* Turn off LED */
     }
-    for (j = 0x800000; j > 0x010000; j >>=1 ) { /* Blink LED 7,6,5,4,3,2,1 */
+    for (j = 23; j > 16; j-- ) { /* Blink LED 7,6,5,4,3,2,1 */
       // Nota la gesti�n del GPIO vosotros la debe�s hacer en GPIO.c no en el main o en el reversi
 	  GPIO_escribir(j,1,1);                               /* Turn on LED */
-      //wait ();                                  					/* call wait function */
+      wait ();                                  					/* call wait function */
       GPIO_escribir(j,1,0);                              /* Turn off LED */
     }
   }

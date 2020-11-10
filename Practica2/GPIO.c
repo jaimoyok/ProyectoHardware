@@ -25,29 +25,28 @@ void GPIO_escribir(int bitInicial, int numBits, int valor) {
             aux |= (1 << i); //Poner bit a 1
         }
 				IOCLR |= aux;
-        IOSET = valor << numBits;
+        IOSET = valor << bitInicial;
     }
 }
 
 //Los bits indicados se utilizaran como bits de entrada.
-void GPIO_marcar_entrada(int bitInicial, int numBits) {
-    if(activado){
-        int aux = 0, i = 0;
-        for (i = bitInicial; i < bitInicial + numBits; ++i) {
-            aux |= (1 << i); //Poner bit a 1
-        }
-        IODIR = aux;
-    } 
+void GPIO_marcar_entrada(int bitInicial, int numBits) { 
+	if(activado){
+		int aux = 0xFFFFFFFF, i = 0;
+		for (i = bitInicial; i < bitInicial + numBits; ++i) {
+			aux &= ~(0x1 << i); //Poner bit a 0
+    }   
+    IODIR = aux;
+	}
 }
 
 //Los bits indicados se utilizaran como bits de salida
 void GPIO_marcar_salida(int bitInicial, int numBits) {
-    if(activado){
-        int aux = 0xFFFFFFFF, i = 0;
-        for (i = bitInicial; i < bitInicial + numBits; ++i) {
-            aux &= ~(0x1 << i); //Poner bit a 0
-        }   
-        IODIR = aux;
+	if(activado){
+		int aux = 0, i = 0;
+		for (i = bitInicial; i < bitInicial + numBits; ++i) {
+			aux |= (1 << i); //Poner bit a 1
     }
-   
+    IODIR = aux;
+	}
 }
