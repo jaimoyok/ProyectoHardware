@@ -1,6 +1,7 @@
  #include "cola.h"
  #include "timer0.h"
  #include "stdint.h"
+ #include "GPIO.h"
 #include "stddef.h "
  enum{ DIM = 32};
 
@@ -33,7 +34,11 @@ size_t cola_tamanyo(){
 
 uint8_t insertarEvento(elem_cola e){
     //GPIO
-    if (cola.n == DIM) return 0;
+    if (cola.n == DIM){ 				
+			GPIO_marcar_salida(30,1);
+			GPIO_escribir(30, 1, 1);
+			while(1);
+		}
     cola.n++;
     cola.data[cola.tail]=e;
     cola.tail++;

@@ -51,7 +51,7 @@ void temporizador0_parar(void) {
 void temporizador_alarma(int _retardo){
   timer0_int_count_retardo = 0;
   retardo=_retardo;
-  periodoActivado = 1;
+  alarmaActivada = 1;
 }
 
 
@@ -59,7 +59,7 @@ void temporizador_alarma(int _retardo){
 void temporizador_alarma_periodica(int _retardo){
   timer0_int_periodo = 0;
   periodo = _retardo;
-  alarmaActivada = 1;
+  periodoActivado= 1;
 }
 
 void temporizador_desactivar_alarma(){
@@ -72,16 +72,16 @@ void timer0_ISR (void) __irq {
     timer0_int_count_retardo++;
     timer0_int_periodo++;
     
-    if(alarmaActivada){
-      if(timer0_int_count_retardo >= retardo){
-        timer0_int_count_retardo = 0;
+    if(periodoActivado){
+      if(timer0_int_periodo >= periodo){
+        timer0_int_periodo = 0;
         cola_guardar_eventos(EV_TIMER0,0);
       }
     }
-    if(periodoActivado){
+    if(alarmaActivada){
       if(timer0_int_count_retardo >= retardo){
         timer0_int_count_retardo = 0;
-        periodoActivado = 0;
+        alarmaActivada= 0;
         cola_guardar_eventos(EV_TIMER0,1);
       }
     }
