@@ -5,11 +5,11 @@
 
 // variable que se activa al detectar una nueva pulsaci�n
 static volatile int eint1_nueva_pulsacion = 0;
-static volatile int eint1_count = 0;
 
 void eint1_ISR (void) __irq {
-	VICIntEnable = VICIntEnClr | 0x00010000;
-	cola_guardar_eventos(EV_BOTON,1);
+	VICIntEnClr = VICIntEnClr | 0x00008000;
+	PINSEL0 		= PINSEL0 & 0xcfffffff;
+	cola_guardar_eventos(EV_BOTON,1);	
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint1_nueva_pulsacion = 1;
@@ -17,16 +17,14 @@ void eint1_ISR (void) __irq {
 
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
-	VICIntEnable = VICIntEnable | 0x00010000;
+	PINSEL0 		= PINSEL0 | 0x20000000;
+	VICIntEnable = VICIntEnable | 0x00008000;
 };
 
 unsigned int eint1_read_nueva_pulsacion(void){
 	return eint1_nueva_pulsacion;
 };
 
-unsigned int eint1_read_count(void){
-	return eint1_count;
-};
 
 void eint1_init (void) {
 // NOTA: seg�n el manual se puede configurar c�mo se activan las interrupciones: por flanco o nivel, alta o baja. 
@@ -45,6 +43,6 @@ void eint1_init (void) {
 	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Sets bits 0 and 1 to 0
 	PINSEL0 		= PINSEL0 | 0x20000000;
 
-	VICVectCntl2 = 0x20 | 14;                   
-  	VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT1 Interrupt
+	VICVectCntl2 = 0x20 | 15;                   
+  	VICIntEnable = VICIntEnable | 0x00008000;                  // Enable EXTINT1 Interrupt
 }

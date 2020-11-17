@@ -2,6 +2,7 @@
  #include "stdint.h"
  #include "Eventos.h"
  #include "boton_eint0.h"
+ #include "boton_eint1.h"
  #include "timer0.h"
  #include "GPIO.h"
 
@@ -39,7 +40,7 @@ static volatile int numero_pulsaciones = 0;
         int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
-            eint0_clear_nueva_pulsacion();
+            eint1_clear_nueva_pulsacion();
             estado = no_pulsado;
             temporizador_desactivar_alarma();
         }
