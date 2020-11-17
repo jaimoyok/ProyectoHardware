@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>0</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -475,6 +475,41 @@
               <FileName>timer0.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\timer0.h</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>Eventos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Eventos.c</FilePath>
+            </File>
+            <File>
+              <FileName>cola.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\cola.c</FilePath>
+            </File>
+            <File>
+              <FileName>boton_eint1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\boton_eint1.c</FilePath>
+            </File>
+            <File>
+              <FileName>pulsacion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pulsacion.c</FilePath>
+            </File>
+            <File>
+              <FileName>reversi8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\reversi8.c</FilePath>
+            </File>
+            <File>
+              <FileName>Time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Time.c</FilePath>
             </File>
           </Files>
         </Group>
