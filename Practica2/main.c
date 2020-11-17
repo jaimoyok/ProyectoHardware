@@ -31,6 +31,9 @@ int main (void) {
 	while (leer_pulsaciones()<4){
 		gestionar_eventos(); // de aqu� s�lo despertamos si hay pulsaci�n
 		};	
+	
+	GPIO_marcar_salida(16,8);	//Set LED pins as outputs
+	GPIO_escribir(16,8,0);
 	// bucle que realiza un blink de leds cada 50ms	   
 	 // generates an interrupt every 0,05ms and increments timeval0
 	temporizador0_empezar();

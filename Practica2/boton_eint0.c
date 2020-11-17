@@ -8,8 +8,9 @@
 static volatile int eint0_nueva_pulsacion = 0;
 
 void eint0_ISR (void) __irq {
-	VICIntEnClr = VICIntEnClr | 0x00004000 ;
-	cola_guardar_eventos(EV_BOTON,0);
+	VICIntEnClr = VICIntEnClr | 0x00004000;
+	PINSEL1 		= PINSEL1 & 0;
+	cola_guardar_eventos(EV_BOTON,0);	
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint0_nueva_pulsacion = 1;
@@ -17,6 +18,7 @@ void eint0_ISR (void) __irq {
 
 void eint0_clear_nueva_pulsacion(void){
 	eint0_nueva_pulsacion = 0;
+	PINSEL1 = PINSEL1 | 1;	
 	VICIntEnable = VICIntEnable | 0x00004000;
 };
 

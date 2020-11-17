@@ -3,6 +3,7 @@
  #include "Eventos.h"
  #include "boton_eint0.h"
  #include "timer0.h"
+ #include "GPIO.h"
 
  typedef enum {
      no_pulsado = 0,
@@ -22,7 +23,6 @@ static volatile int numero_pulsaciones = 0;
  void gestionar_boton(uint8_t interrupcion_boton) {
 
      static estado_boton_t estado = no_pulsado;
-     static periodos = 0;
 
      if (interrupcion_boton == 0 && estado == no_pulsado) {
          return;
@@ -36,9 +36,9 @@ static volatile int numero_pulsaciones = 0;
      } 
      else {
 			 //leeemos para comprobar si se activa el boton
-        int boton = GPIO_leer(16,8);
+        int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
-        if(boton == 1){
+        if(boton == 1) {
             eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
             temporizador_desactivar_alarma();
