@@ -29,6 +29,7 @@ int main (void) {
 	// en este proyecto no va a funcionar porque la interrupci�n se activa por nivel y no se ha a�adido la gesti�n necesaria para ue s�lo interrumpa una vez.
 	temporizador0_iniciar();
 	while (leer_pulsaciones() < 4){
+		PM_idle();
 		gestionar_eventos(); // de aqu� s�lo despertamos si hay pulsaci�n
 		};	
 	// bucle que realiza un blink de leds cada 50ms	   
