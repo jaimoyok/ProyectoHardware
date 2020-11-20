@@ -13,7 +13,4 @@ enum{
  void gestionar_eventos();
  int leer_pulsaciones();
 
-
-
-
-#endif 
+#endif

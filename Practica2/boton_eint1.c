@@ -7,7 +7,7 @@
 static volatile int eint1_nueva_pulsacion = 0;
 
 void eint1_ISR (void) __irq {
-	VICIntEnClr = VICIntEnClr | 0x00008000;
+	VICIntEnClr = VICIntEnClr | 0x00008000;	//Deshabilita EINT1
 	PINSEL0 		= PINSEL0 & 0xcfffffff;
 	cola_guardar_eventos(EV_BOTON,1);	
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
@@ -17,7 +17,7 @@ void eint1_ISR (void) __irq {
 
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
-	PINSEL0 		= PINSEL0 | 0x20000000;
+	PINSEL0 = PINSEL0 | 0x20000000;
 	VICIntEnable = VICIntEnable | 0x00008000;
 };
 
@@ -27,22 +27,17 @@ unsigned int eint1_read_nueva_pulsacion(void){
 
 
 void eint1_init (void) {
-// NOTA: seg�n el manual se puede configurar c�mo se activan las interrupciones: por flanco o nivel, alta o baja. 
-// Se usar�an los registros EXTMODE y EXTPOLAR. 
-// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguraci�n de EXT Interrupts
-// configure EXTINT0 active if a rising-edge is detected
-//	EXTMODE 	=	1; //1 edge, 0 level
-//	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge
-//  prueba = EXTMODE;
 	eint1_nueva_pulsacion = 0;
-	EXTINT =  EXTINT | 1;        // clear interrupt flag     	
+	EXTINT =  EXTINT | 1;        // clear interrupt flag
+
 	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
 	VICVectAddr2 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
-    // 0x20 bit 5 enables vectored IRQs. 
-		// 14 is the number of the interrupt assigned. Number 14 is the EINT0 (see table 40 of the LPC2105 user manual  
-	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Sets bits 0 and 1 to 0
-	PINSEL0 		= PINSEL0 | 0x20000000;
+   
+	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Se Limpian los bits 29:28
+	PINSEL0 		= PINSEL0 | 0x20000000;	// 10 en los bits 29:28 para EINT1
 
+ 	// 0x20 bit 5 enables vectored IRQs. 
+	// 15 is the number of the interrupt assigned. Number 15 is the EINT1
 	VICVectCntl2 = 0x20 | 15;                   
-  	VICIntEnable = VICIntEnable | 0x00008000;                  // Enable EXTINT1 Interrupt
+  	VICIntEnable = VICIntEnable | 0x00008000; // Enable EXTINT1 Interrupt
 }

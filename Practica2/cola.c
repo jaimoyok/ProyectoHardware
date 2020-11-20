@@ -1,5 +1,6 @@
  #include "cola.h"
- #include "timer0.h"
+ //#include "timer0.h"
+ #include "timer1.h"
  #include "stdint.h"
  #include "GPIO.h"
 #include "stddef.h "
