@@ -39,5 +39,5 @@ void eint0_init (void) {
 	// 0x20 bit 5 enables vectored IRQs. 
 	// 14 is the number of the interrupt assigned. Number 14 is the EINT0
 	VICVectCntl2 = 0x20 | 14;                   
-  	VICIntEnable = VICIntEnable | 0x00004000; // Enable EXTINT0 Interrupt
+  VICIntEnable = VICIntEnable | 0x00004000; // Enable EXTINT0 Interrupt
 }

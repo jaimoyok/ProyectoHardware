@@ -31,13 +31,13 @@ void eint1_init (void) {
 	EXTINT =  EXTINT | 1;        // clear interrupt flag
 
 	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
-	VICVectAddr2 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
+	VICVectAddr3 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
    
 	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Se Limpian los bits 29:28
 	PINSEL0 		= PINSEL0 | 0x20000000;	// 10 en los bits 29:28 para EINT1
 
  	// 0x20 bit 5 enables vectored IRQs. 
 	// 15 is the number of the interrupt assigned. Number 15 is the EINT1
-	VICVectCntl2 = 0x20 | 15;                   
-  	VICIntEnable = VICIntEnable | 0x00008000; // Enable EXTINT1 Interrupt
+	VICVectCntl3 = 0x20 | 15;                   
+  VICIntEnable = VICIntEnable | 0x00008000; // Enable EXTINT1 Interrupt
 }

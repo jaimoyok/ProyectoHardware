@@ -3,8 +3,7 @@
  #include "Eventos.h"
  #include "boton_eint0.h"
  #include "boton_eint1.h"
- //#include "timer0.h"
- #include "timer1.h"
+ #include "timer0.h"
  #include "GPIO.h"
 
  typedef enum {

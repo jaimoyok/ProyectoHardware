@@ -507,14 +507,24 @@
               <FilePath>.\boton_eint1.h</FilePath>
             </File>
             <File>
-              <FileName>timer1.c</FileName>
+              <FileName>timer0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\timer1.c</FilePath>
+              <FilePath>.\timer0.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\timer0.h</FilePath>
             </File>
             <File>
               <FileName>timer1.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\timer1.h</FilePath>
+            </File>
+            <File>
+              <FileName>timer1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer1.c</FilePath>
             </File>
           </Files>
         </Group>

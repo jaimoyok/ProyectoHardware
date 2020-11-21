@@ -36,7 +36,7 @@ void GPIO_marcar_entrada(int bitInicial, int numBits) {
 		for (i = bitInicial; i < bitInicial + numBits; ++i) {
 			aux &= ~(0x1 << i); //Poner bit a 0
     }   
-    IODIR = aux;
+    IODIR &= aux;
 	}
 }
 
@@ -47,6 +47,6 @@ void GPIO_marcar_salida(int bitInicial, int numBits) {
 		for (i = bitInicial; i < bitInicial + numBits; ++i) {
 			aux |= (1 << i); //Poner bit a 1
     }
-    IODIR = aux;
+    IODIR |= aux;
 	}
 }
