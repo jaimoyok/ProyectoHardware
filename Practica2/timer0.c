@@ -44,8 +44,9 @@ unsigned int temporizador0_leer(void){
 	return timer0_int_count;
 };
 
-void temporizador0_parar(void) {
+unsigned int temporizador0_parar(void) {
   VICIntEnClr = VICIntEnClr | 0x00000010;
+  return temporizador0_leer();
 }
 
 void temporizador_alarma(int _retardo){

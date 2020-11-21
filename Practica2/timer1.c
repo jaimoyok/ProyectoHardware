@@ -36,8 +36,9 @@ unsigned int temporizador1_leer(void){
 	return timer1_int_count;
 };
 
-void temporizador1_parar(void) {
+unsigned int temporizador1_parar(void) {
   VICIntEnClr = VICIntEnClr | 0x00000020;
+  return temporizador1_leer();
 }
 
 /* Timer Counter 0 Interrupt executes each 10ms @ 60 MHz CPU Clock */
