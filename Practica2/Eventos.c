@@ -53,7 +53,9 @@ static volatile int columna;
      } 
      else {
 			 //leeemos para comprobar si se activa el boton
-        int boton = GPIO_leer(16,1);
+
+        //int boton = GPIO_leer(16,1);
+		int boton = GPIO_leer(14,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
             eint1_clear_nueva_pulsacion();
@@ -95,6 +97,7 @@ void gestionar_led(){
          }
 				avanzar();
      }
+
  }
 
  int esperar_movimiento(){
@@ -102,5 +105,6 @@ void gestionar_led(){
         PM_power_down();
         gestionar_eventos();
      }
-    
  }
+    
+

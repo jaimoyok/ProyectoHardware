@@ -30,9 +30,9 @@ void temporizador0_iniciar (void) {
     // configuration of the IRQ slot number 0 of the VIC for Timer 0 Interrupt
 		VICVectAddr0 = (unsigned long)timer0_ISR;          // set interrupt vector in 0
     // 0x20 bit 5 enables vectored IRQs. 
-		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0 (see table 40 of the LPC2105 user manual  
+		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0
 		VICVectCntl0 = 0x20 | 4;   
-    VICIntEnable = VICIntEnable | 0x00000010;                  // Enable Timer0 Interrupt                
+    VICIntEnable = VICIntEnable | 0x00000010; // Enable Timer0 Interrupt                
 }
 
 void temporizador0_empezar(void) {
