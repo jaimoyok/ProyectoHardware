@@ -13,7 +13,7 @@
  } estado_boton_t;
 
  const int  RETARDO = 50; //periodo de comprobacion
-
+static volatile int numero_pulsaciones=0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
 static volatile int fila;
@@ -24,6 +24,10 @@ static volatile int columna;
      fila = GPIO_leer(0,3);
      columna = GPIO_leer(8,3);
  }
+
+int leer_pulsaciones(){
+  return numero_pulsaciones;
+}
 
  int leer_move(){
      return mover;
@@ -37,7 +41,7 @@ static volatile int columna;
      return columna;
  }
 
- void gestionar_boton(uint8_t interrupcion_boton) {
+ void gestionar_boton0(uint8_t interrupcion_boton) {
 
      static estado_boton_t estado = no_pulsado;
 
@@ -48,21 +52,49 @@ static volatile int columna;
      // ha habido interrupcion
      if(estado == no_pulsado) {
         estado = pulsado;
-        numero_pulsaciones++;
+        numero_pulsaciones ++;
         temporizador_alarma_periodica(RETARDO);
-     } 
+     }
      else {
 			 //leeemos para comprobar si se activa el boton
 
         //int boton = GPIO_leer(16,1);
-		int boton = GPIO_leer(14,1);
+		int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
-            eint1_clear_nueva_pulsacion();
+            eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
             temporizador_desactivar_alarma();
         }
     }
+}
+
+void gestionar_boton1(uint8_t interrupcion_boton) {
+
+    static estado_boton_t estado = no_pulsado;
+
+    if (interrupcion_boton == 0 && estado == no_pulsado) {
+        return;
+    }
+
+    // ha habido interrupcion
+    if(estado == no_pulsado) {
+       estado = pulsado;
+       numero_pulsaciones++;
+       temporizador_alarma_periodica(RETARDO);
+    }
+    else {
+      //leeemos para comprobar si se activa el boton
+
+       //int boton = GPIO_leer(16,1);
+   int boton = GPIO_leer(14,1);
+       //si esta a 1 es que ya se ha dejado de pulsar
+       if(boton == 1) {
+           eint1_clear_nueva_pulsacion();
+           estado = no_pulsado;
+           temporizador_desactivar_alarma();
+       }
+   }
 }
 
 
@@ -90,7 +122,7 @@ void gestionar_led(){
 
                  break;}
              case EV_TIMER0: {
-                    gestionar_boton1(0); 
+                    gestionar_boton1(0);
                     gestionar_boton0(0);
                     gestionar_led();
                     break; }
@@ -106,5 +138,3 @@ void gestionar_led(){
         gestionar_eventos();
      }
  }
-    
-
