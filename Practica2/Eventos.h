@@ -10,12 +10,13 @@ enum{
     EV_BOTON = 2,
 };
 
-int esperar_movimiento(void);
+void esperar_movimiento(void);
+void aceptar_movimiento(void);
 int leer_pulsaciones(void);
 int leer_move(void);
 int leer_fila(void);
 int leer_columna(void);
-void iniciarOIreversi(void);
+void iniciarOIreversi(int **tablero);
 
 
 #endif

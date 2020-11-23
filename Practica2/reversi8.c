@@ -417,21 +417,26 @@ void reversi8()
     int8_t f, c;    // fila y columna elegidas por la m�quina para su movimiento
 
     init_table(tablero, candidatas);
-		iniciarOIreversi();
+	iniciarOIreversi(tablero);
 
     while (fin == 0)
     {
         move = 0;
         esperar_movimiento();
+        
         // si la fila o columna son 8 asumimos que el jugador no puede mover
         if (leer_move() == 1)
         {
             fila = leer_fila();
             columna = leer_columna();
+            aceptar_movimiento();
+            if(leer_move() == 0)break;
             tablero[fila][columna] = FICHA_NEGRA;
             actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
             actualizar_candidatas(candidatas, fila, columna);
             move = 1;
+        }
+
         }
 
         // escribe el movimiento en las variables globales fila columna

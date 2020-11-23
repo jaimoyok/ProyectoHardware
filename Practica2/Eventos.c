@@ -13,18 +13,22 @@
      pulsado = 1
  } estado_boton_t;
 
- const int  RETARDO = 50; //periodo de comprobacion
- const int  PERIODO = 60;    //numero de alarmas que se espera para hacer un movimiento
+ const int  RETARDO = 250; //periodo de comprobacion
+ const int  PERIODO = 12;    //numero de alarmas que se espera para hacer un movimiento
 static volatile int numero_pulsaciones=0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
 static volatile int fila;
 static volatile int columna;
 static volatile int cuenta_atras= PERIODO;
+static volatile int aceptando = 0;
+int ** tablero;
  // sólo llamar si hay interrupción de boton
  // o estoy estado pulsado
 
-void iniciarOIreversi(void){
+void iniciarOIreversi(int **_tablero){
+    //guardar la direccion de tablero
+    tablero = _tablero;
   //activar perifericos
 	 eint0_init();
   eint1_init();
@@ -61,6 +65,11 @@ int leer_pulsaciones(void){
 
   int leer_columna(void){
      return columna;
+ }
+
+ void parpadea(void){
+     if(tablero[fila][columna] == 2)tablero[fila][columna] = 0;
+     else tablero[fila][columna] == 2;
  }
 
  void gestionar_boton0(uint8_t interrupcion_boton) {
@@ -131,18 +140,21 @@ void gestionar_eventos(void)
              case EV_BOTON:{
                pulsacion = 1;
                 if(data == 1){
-                    mover = 1;
+                    mover = 0;
                     gestionar_boton1(1);
                 }
                 else{
-                     mover = 0;
+                     mover = 1;
                      gestionar_boton0(1);
                 }
 
                  break;}
              case EV_TIMER0: {
                   if(data == 0){
-                    cuenta_atras--;
+                    if(aceptando){
+                        cuenta_atras--;
+                        parpadear();
+                    }
                     gestionar_boton1(0);
                     gestionar_boton0(0);
                     gestionar_led();
@@ -150,10 +162,8 @@ void gestionar_eventos(void)
                   }
 
          }
-         if(cuenta_atras == 0){
+         if(cuenta_atras == 0 & aceptando){
            pulsacion = 1;
-           mover = 0;
-           cuenta_atras = PERIODO;
          }
 		avanzar();
      }
@@ -167,5 +177,15 @@ void esperar_movimiento(void){
      }
      actualizar_movimiento();
      pulsacion = 0;
-		 cuenta_atras = PERIODO;
+	 cuenta_atras = PERIODO;
+ }
+ 
+ void aceptar_movimiento(void){
+    aceptando = 1;
+    cuenta_atras = PERIODO;
+    while(!pulsacion){
+        PM_idle();
+        gestionar_eventos();
+     }
+     tablero[fila][columna] = 0;
  }
