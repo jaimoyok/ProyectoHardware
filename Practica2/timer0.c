@@ -16,28 +16,28 @@ unsigned int periodo; //perido de la alarma ciclica
 uint8_t alarmaActivada;
 uint8_t periodoActivado;
 
-void timer0_ISR (void) __irq;    // Generate Interrupt 
+void timer0_ISR (void) __irq;    // Generate Interrupt
 
 
 /* Setup the Timer Counter 0 Interrupt */
 void temporizador0_iniciar (void) {
-		timer0_int_count = 0;	
+		timer0_int_count = 0;
 	// configuration of Timer 0
-		T0MR0 = 149999; 
+		T0MR0 = 5999999;
     //T0MR0 = 2999990;                       // Interrumpe cada 1ms = 3000000-1 counts
     T0MCR = 3;                              // Generates an interrupt and resets the count when the value of MR0 is reached
     T0TCR = 1;                             // Timer0 Enable
     // configuration of the IRQ slot number 0 of the VIC for Timer 0 Interrupt
 		VICVectAddr0 = (unsigned long)timer0_ISR;          // set interrupt vector in 0
-    // 0x20 bit 5 enables vectored IRQs. 
+    // 0x20 bit 5 enables vectored IRQs.
 		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0
-		VICVectCntl0 = 0x20 | 4;   
-    VICIntEnable = VICIntEnable | 0x00000010; // Enable Timer0 Interrupt                
+		VICVectCntl0 = 0x20 | 4;
+    VICIntEnable = VICIntEnable | 0x00000010; // Enable Timer0 Interrupt
 }
 
 void temporizador0_empezar(void) {
   timer0_int_count = 0;
-  
+
 }
 
 unsigned int temporizador0_leer(void){
@@ -62,7 +62,7 @@ void temporizador_alarma_periodica(int _retardo){
   periodoActivado= 1;
 }
 
-void temporizador_desactivar_alarma(){
+void temporizador_desactivar_alarma(void){
   alarmaActivada=0;
 }
 
@@ -71,7 +71,7 @@ void timer0_ISR (void) __irq {
     timer0_int_count++;
     timer0_int_count_retardo++;
     timer0_int_periodo++;
-    
+
     if(periodoActivado){
       if(timer0_int_periodo >= periodo){
         timer0_int_periodo = 0;
@@ -88,6 +88,3 @@ void timer0_ISR (void) __irq {
     T0IR = 1;                              // Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
-
-
-

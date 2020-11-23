@@ -7,6 +7,6 @@ unsigned int temporizador0_leer(void);
 void temporizador0_parar(void);
 void temporizador_alarma(int retardo);
 void temporizador_alarma_periodica(int _retardo);
-void temporizador_desactivar_alarma();
+void temporizador_desactivar_alarma(void);
 
 #endif

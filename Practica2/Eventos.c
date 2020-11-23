@@ -13,31 +13,46 @@
  } estado_boton_t;
 
  const int  RETARDO = 50; //periodo de comprobacion
+ const int  PERIODO =     //numero de alarmas que se espera para hacer un movimiento
 static volatile int numero_pulsaciones=0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
 static volatile int fila;
 static volatile int columna;
+static volatile int cuenta_atras= PERIODO;
  // sólo llamar si hay interrupción de boton
  // o estoy estado pulsado
- void actualizar_movimiento(){
+
+void iniciarOIreversi(void){
+  //activar perifericos
+  GPIO_iniciar();
+  GPIO_marcar_salida(31,1);
+  GPIO_marcar_entrada(0,3);
+  GPIO_marcar_entrada(8,3);
+  eint0_init();
+  eint1_init();
+  temporizador0_iniciar();
+  temporizador1_iniciar();
+}
+
+ void actualizar_movimiento(void){
      fila = GPIO_leer(0,3);
      columna = GPIO_leer(8,3);
  }
 
-int leer_pulsaciones(){
+int leer_pulsaciones(void){
   return numero_pulsaciones;
 }
 
- int leer_move(){
+ int leer_move(void){
      return mover;
  }
 
- int leer_fila(){
+ int leer_fila(void){
      return fila;
  }
 
-  int leer_columna(){
+  int leer_columna(void){
      return columna;
  }
 
@@ -57,8 +72,6 @@ int leer_pulsaciones(){
      }
      else {
 			 //leeemos para comprobar si se activa el boton
-
-        //int boton = GPIO_leer(16,1);
 		int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
@@ -98,10 +111,13 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
 }
 
 
-void gestionar_led(){
-
+void gestionar_led(void){
+  static int estado = 0;
+  GPIO_escribir(31,estado);
+  estado = !estado;
 }
- void gestionar_eventos()
+
+void gestionar_eventos(void)
  {
      while(nuevoEvento()) {
        uint8_t evento = 0;
@@ -113,7 +129,6 @@ void gestionar_led(){
                 if(data == 1){
                     mover = 1;
                     gestionar_boton1(1);
-                    acualizarfichas();
                 }
                 else{
                      mover = 0;
@@ -122,17 +137,25 @@ void gestionar_led(){
 
                  break;}
              case EV_TIMER0: {
+                  if(data == 0){
+                    cuenta_atras--;
                     gestionar_boton1(0);
                     gestionar_boton0(0);
                     gestionar_led();
                     break; }
+                  }
+
+         }
+         if(cuenta_atras = 0){
+           pulsacion = 1;
+           cuenta_atras = PERIODO;
          }
 				avanzar();
      }
 
  }
 
- int esperar_movimiento(){
+int esperar_movimiento(void){
      while(!pulsacion){
         PM_power_down();
         gestionar_eventos();
