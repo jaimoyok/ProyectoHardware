@@ -33,6 +33,7 @@ void iniciarOIreversi(void){
   eint1_init();
   temporizador0_iniciar();
   temporizador1_iniciar();
+  temporizador_alarma_periodica(RETARDO);
 }
 
  void actualizar_movimiento(void){
@@ -68,16 +69,15 @@ int leer_pulsaciones(void){
      if(estado == no_pulsado) {
         estado = pulsado;
         numero_pulsaciones ++;
-        temporizador_alarma_periodica(RETARDO);
      }
      else {
 			 //leeemos para comprobar si se activa el boton
 		int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
+
             eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
-            temporizador_desactivar_alarma();
         }
     }
 }
@@ -94,7 +94,6 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
     if(estado == no_pulsado) {
        estado = pulsado;
        numero_pulsaciones++;
-       temporizador_alarma_periodica(RETARDO);
     }
     else {
       //leeemos para comprobar si se activa el boton
@@ -105,7 +104,6 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
        if(boton == 1) {
            eint1_clear_nueva_pulsacion();
            estado = no_pulsado;
-           temporizador_desactivar_alarma();
        }
    }
 }
@@ -126,6 +124,7 @@ void gestionar_eventos(void)
        siguienteEvento(&data, &evento, &time);
          switch (evento) {
              case EV_BOTON:{
+               pulsacion = 1;
                 if(data == 1){
                     mover = 1;
                     gestionar_boton1(1);
@@ -160,4 +159,6 @@ int esperar_movimiento(void){
         PM_power_down();
         gestionar_eventos();
      }
+     actualizar_movimiento(void);
+     pulsacion = 0;
  }

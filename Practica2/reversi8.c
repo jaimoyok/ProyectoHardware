@@ -139,12 +139,12 @@ void init_table(int8_t tablero[][DIM], int8_t candidatas[][DIM])
 // CUIDADO: si el compilador coloca esta variable en un registro, no funcionar�.
 // Hay que definirla como "volatile" para forzar a que antes de cada uso la cargue de memoria
 
-void esperar_mov(int8_t *ready)
+/*void esperar_mov(int8_t *ready)
 {
     while (*ready == 0) {};  // bucle de espera de respuestas hasta que el se modifique el valor de ready (hay que hacerlo manualmente)
 
     *ready = 0;  //una vez que pasemos el bucle volvemos a fijar ready a 0;
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -433,6 +433,7 @@ void reversi8()
     int8_t f, c;    // fila y columna elegidas por la m�quina para su movimiento
 
     init_table(tablero, candidatas);
+		iniciarOIreversi();
 
     while (fin == 0)
     {

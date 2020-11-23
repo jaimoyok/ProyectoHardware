@@ -6,16 +6,17 @@
 #include "Eventos.h"
 #include <stdint.h>
 // variables para contabilizar el n�mero de interrupciones
-static volatile unsigned int timer1_int_count = 0;
+static volatile long timer1_int_count = 0;
 
 void timer1_ISR (void) __irq;    // Generate Interrupt
 
 
 /* Setup the Timer Counter 1 Interrupt */
 void temporizador1_iniciar (void) {
+		APBDIV |= 1;
 		timer1_int_count = 0;
 	  // configuration of Timer 1
-    T1MR0 = 5999999;                      // Interrumpe cada 1ms = 3000000-1 counts
+    T1MR0 = 599999;                      // Interrumpe cada 0,1ms
     T1MCR = 3;                              // Generates an interrupt and resets the count when the value of MR0 is reached
     T1TCR = 1;                             // Timer1 Enable
 
