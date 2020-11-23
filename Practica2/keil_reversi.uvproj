@@ -526,6 +526,11 @@
               <FileType>1</FileType>
               <FilePath>.\timer1.c</FilePath>
             </File>
+            <File>
+              <FileName>patron_volteo_arm_arm.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\patron_volteo_arm_arm.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

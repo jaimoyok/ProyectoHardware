@@ -4,6 +4,7 @@
  #include "boton_eint0.h"
  #include "boton_eint1.h"
  #include "timer0.h"
+ #include "timer1.h"
  #include "GPIO.h"
  #include "Power_management.h"
 
@@ -25,12 +26,17 @@ static volatile int cuenta_atras= PERIODO;
 
 void iniciarOIreversi(void){
   //activar perifericos
+	 eint0_init();
+  eint1_init();
   GPIO_iniciar();
-  GPIO_marcar_salida(31,1);
+	GPIO_marcar_salida(0,32);
+	GPIO_escribir(24,8,0);
+	GPIO_escribir(0,3,0);
+	GPIO_escribir(8,3,0);
+	GPIO_marcar_entrada(16,1);
+	GPIO_marcar_entrada(14,1);
   GPIO_marcar_entrada(0,3);
   GPIO_marcar_entrada(8,3);
-  eint0_init();
-  eint1_init();
   temporizador0_iniciar();
   temporizador1_iniciar();
   temporizador_alarma_periodica(RETARDO);
@@ -75,7 +81,6 @@ int leer_pulsaciones(void){
 		int boton = GPIO_leer(16,1);
 				//si esta a 1 es que ya se ha dejado de pulsar
         if(boton == 1) {
-
             eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
         }
@@ -145,7 +150,7 @@ void gestionar_eventos(void)
                   }
 
          }
-         if(cuenta_atras = 0){
+         if(cuenta_atras == 0){
            pulsacion = 1;
            mover = 0;
            cuenta_atras = PERIODO;
@@ -155,11 +160,12 @@ void gestionar_eventos(void)
 
  }
 
-int esperar_movimiento(void){
+void esperar_movimiento(void){
      while(!pulsacion){
-        PM_power_down();
+        PM_idle();
         gestionar_eventos();
      }
      actualizar_movimiento();
      pulsacion = 0;
+		 cuenta_atras = PERIODO;
  }

@@ -3,7 +3,7 @@
  #include "stdint.h"
  #include "GPIO.h"
 #include "stddef.h "
- enum{ DIM = 32};
+ enum{ DIM = 512};
 
 
 typedef struct {

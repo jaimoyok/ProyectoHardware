@@ -15,7 +15,7 @@ void timer1_ISR (void) __irq;    // Generate Interrupt
 
 /* Setup the Timer Counter 1 Interrupt */
 void temporizador1_iniciar (void) {
-		APBDIV |= 1;
+		VPBDIV |= 1;
 		timer1_int_count = 0;
 
 	  // configuration of Timer 1
