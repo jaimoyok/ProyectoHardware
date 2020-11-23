@@ -13,7 +13,7 @@
  } estado_boton_t;
 
  const int  RETARDO = 50; //periodo de comprobacion
- const int  PERIODO =     //numero de alarmas que se espera para hacer un movimiento
+ const int  PERIODO = 60;    //numero de alarmas que se espera para hacer un movimiento
 static volatile int numero_pulsaciones=0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
@@ -111,7 +111,7 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
 
 void gestionar_led(void){
   static int estado = 0;
-  GPIO_escribir(31,estado);
+  GPIO_escribir(31,1,estado);
   estado = !estado;
 }
 
@@ -147,9 +147,10 @@ void gestionar_eventos(void)
          }
          if(cuenta_atras = 0){
            pulsacion = 1;
+           mover = 0;
            cuenta_atras = PERIODO;
          }
-				avanzar();
+		avanzar();
      }
 
  }
@@ -159,6 +160,6 @@ int esperar_movimiento(void){
         PM_power_down();
         gestionar_eventos();
      }
-     actualizar_movimiento(void);
+     actualizar_movimiento();
      pulsacion = 0;
  }

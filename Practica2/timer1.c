@@ -6,7 +6,7 @@
 #include "Eventos.h"
 #include <stdint.h>
 // variables para contabilizar el n�mero de interrupciones
-const int MAX_CONT
+const int MAX_CONT = 20;
 static volatile unsigned long timer1_int_count = 0;
 static volatile int contadores = 0;
 static volatile long inicio_contadores[MAX_CONT];

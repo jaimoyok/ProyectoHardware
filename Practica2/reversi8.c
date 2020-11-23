@@ -433,7 +433,7 @@ void reversi8()
     int8_t f, c;    // fila y columna elegidas por la m�quina para su movimiento
 
     init_table(tablero, candidatas);
-		iniciarOIreversi();
+	iniciarOIreversi();
 
     while (fin == 0)
     {
