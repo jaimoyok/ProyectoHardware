@@ -161,7 +161,7 @@ void gestionar_eventos() {
                         state = ACEPTAR;
                         numero_pulsados++;
                         leer_movimiento();
-                        cuenta_atras = RETARDO;
+                        cuenta_atras = PERIODOS;
                         break;
                     }
                     case ACEPTAR: {

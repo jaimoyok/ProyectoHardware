@@ -16,9 +16,11 @@ void eint1_ISR (void) __irq {
 
 int8_t eint1_esta_pulsado(){
 	EXTINT =  EXTINT | 2;
-	if(!(EXTINT & 2))return 1;
-	return 0;
-	
+	if(!(EXTINT & 2))
+		return 0;
+	else 
+		return 1;
+
 }
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
