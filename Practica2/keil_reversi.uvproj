@@ -487,11 +487,6 @@
               <FilePath>.\boton_eint1.c</FilePath>
             </File>
             <File>
-              <FileName>pulsacion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\pulsacion.c</FilePath>
-            </File>
-            <File>
               <FileName>reversi8.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\reversi8.c</FilePath>

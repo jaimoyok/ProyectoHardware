@@ -4,7 +4,7 @@
 
 void eint1_init (void);
 void eint1_clear_nueva_pulsacion(void);
-int8_t eint1_esta_pulsado();
+int8_t eint1_esta_pulsado(void);
 
 
 #endif

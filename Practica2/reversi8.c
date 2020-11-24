@@ -204,7 +204,7 @@ extern int patron_volteo_arm_arm(int8_t tablero[][8], int *longitud, int8_t f, i
 
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
 {
-	patron_volteo_arm_arm(tablero,longitud,FA,CA,SF,SC,color);
+	return patron_volteo_arm_arm(tablero,longitud,FA,CA,SF,SC,color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
