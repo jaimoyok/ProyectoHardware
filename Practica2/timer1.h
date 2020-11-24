@@ -4,7 +4,6 @@
 void temporizador1_iniciar (void);
 void temporizador1_empezar(void);
 unsigned int temporizador1_leer(void);
-void temporizador1_parar(void);
-
+unsigned int temporizador1_parar(void);
 
 #endif
