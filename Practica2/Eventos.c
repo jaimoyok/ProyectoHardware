@@ -10,15 +10,14 @@
 #include "reversi8.h"
 
 const int RETARDO = 250; //periodo de comprobacion
-const int PERIODO = 12;  //numero de alarmas que se espera para hacer un movimiento
-static volatile int numero_pulsaciones = 0;
+const int PERIODOS = 12;  //numero de alarmas que se espera para hacer un movimiento
+static volatile int numero_pulsados = 0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
 static volatile int fila;
 static volatile int columna;
-static volatile int cuenta_atras = PERIODO;
+static volatile int cuenta_atras = PERIODOS;
 static volatile int aceptando = 0;
-static volatile uint8_t *casilla;
 
 typedef enum {
     no_pulsado = 0,
@@ -41,18 +40,46 @@ void iniciarOIreversi() {
     GPIO_escribir(24, 8, 0);
     GPIO_escribir(0, 3, 0);
     GPIO_escribir(8, 3, 0);
-    GPIO_marcar_entrada(16, 1);
-    GPIO_marcar_entrada(14, 1);
+    //Botones
+    //GPIO_marcar_entrada(16, 1);
+    //GPIO_marcar_entrada(14, 1);
+    //Fila y columna
     GPIO_marcar_entrada(0, 3);
     GPIO_marcar_entrada(8, 3);
     temporizador0_iniciar();
     temporizador1_iniciar();
+	  temporizador0_empezar();
+    temporizador1_empezar();
     reversi8_iniciar();
 }
 
-void actualizar_movimiento() {
+void leer_movimiento() {
     fila = GPIO_leer(0, 3);
     columna = GPIO_leer(8, 3);
+}
+
+void aceptar_movimiento() {
+    GPIO_escribir(29,1,0); //Se limpia la casilla de movimiento incorrecto.
+    if (reversi8_comprobar_movimiento(fila, columna)) {
+        reversi8_mover_jugador(fila, columna);
+        reversi8_mover_ia();
+    }
+    else {
+        //Movimiento no valido
+        GPIO_escribir(29,1,1);
+    }
+}
+
+void controlar_alarmas() {
+    static int alarma_activada = 0;
+    if (numero_pulsados > 0 && alarma_activada == 0) { //Numero pulsados > 0 (algo requiere alarma)
+        alarma_activada = 1;
+        temporizador_alarma_periodica(RETARDO);
+    }
+    else if (numero_pulsados == 0 && alarma_activada == 1) {
+        alarma_activada = 0;
+        temporizador_desactivar_alarma();
+    }
 }
 
 void gestionar_boton0(uint8_t interrupcion_boton) {
@@ -66,15 +93,14 @@ void gestionar_boton0(uint8_t interrupcion_boton) {
     // ha habido interrupcion
     if (estado == no_pulsado) {
         estado = pulsado;
-        numero_pulsaciones++;
+        numero_pulsados++;
     }
     else {
-        //leeemos para comprobar si se activa el boton
-        int boton = GPIO_leer(16, 1);
         //Si boton es 1 se ha dejado de pulsar
-        if (boton == 1) {
+        if (!eint0_esta_pulsado()) {
             eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
+            numero_pulsados--;
         }
     }
 }
@@ -90,16 +116,14 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
     // ha habido interrupcion
     if (estado == no_pulsado) {
         estado = pulsado;
-        numero_pulsaciones++;
+        numero_pulsados++;
     }
     else {
-        //leeemos para comprobar si se activa el boton
-
-        int boton = GPIO_leer(14, 1);
         //Si boton es 1 se ha dejado de pulsar
-        if (boton == 1) {
+        if (!eint1_esta_pulsado()) {
             eint1_clear_nueva_pulsacion();
             estado = no_pulsado;
+            numero_pulsados--;
         }
     }
 }
@@ -116,6 +140,7 @@ void gestionar_eventos() {
     uint32_t data = 0;
     uint32_t time = 0;
     while (1) {
+        controlar_alarmas();
         while (!nuevoEvento()) {
             if (state == INICIO) {
                 PM_idle();
@@ -134,27 +159,30 @@ void gestionar_eventos() {
                         //Se ha realizado un movimiento.
                         //A espera de confirmación temporal (3s) o por botón.
                         state = ACEPTAR;
-                        temporizador_alarma_periodica(60);
-                        actualizar_movimiento();
+                        numero_pulsados++;
+                        leer_movimiento();
                         cuenta_atras = RETARDO;
                         break;
                     }
                     case ACEPTAR: {
                         //El usuario ha confirmado su movimiento. 
                         //Se coloca la ficha y turno de la IA.
-                        temporizador_desactivar_alarma();
-                        reversi8_mover_jugador(fila, columna);
-                        reversi8_mover_ia();
+                        aceptar_movimiento();
+                        state = INICIO;
+                        numero_pulsados--;
+                        break;
                     }
                     case FIN: {
                         //Se ha terminado la partida y comienza una nueva.
                         reversi8_iniciar();
                         state = INICIO;
+                        break;
                     }
 
                     default:
                         break;
                 }
+								break;
             }
             case EV_BOTON1: {
                 gestionar_boton1(1);
@@ -169,18 +197,21 @@ void gestionar_eventos() {
                     }
                     case ACEPTAR: {
                         //Se cancela el movimiento realizado.
-                        temporizador_desactivar_alarma();
-                        state = INICIO;
+                        numero_pulsados--;
+                        limpiar_casilla(fila, columna); //Se asegura de que se no se modifica la casilla
+												state = INICIO;
                         break;
                     }
                     case FIN: {
                         //Se ha terminado la partida y comienza una nueva.
                         reversi8_iniciar();
                         state = INICIO;
+                        break;
                     }
                     default:
                         break;
                 }
+								break;
             }
 
             case EV_TIMER0: {
@@ -192,41 +223,18 @@ void gestionar_eventos() {
                         parpadea(fila, columna);
                         cuenta_atras--;
                         if (cuenta_atras == 0) {
-                            //Se confirma el movimoento realizado al concluir el tiempo.
-                            temporizador_desactivar_alarma();
-                            reversi8_mover_jugador(fila, columna);
-                            reversi8_mover_ia();
+                            aceptar_movimiento();
+                            state = INICIO;
                         }
+                        numero_pulsados--;
                         break;
                     }
                     default:
                         break;
                 }
+								break;
             }
         }
         avanzar();
     }
-}
-
-void esperar_movimiento() {
-    while (!pulsacion) {
-        PM_idle();
-        gestionar_eventos();
-    }
-    actualizar_movimiento();
-    pulsacion = 0;
-    cuenta_atras = PERIODO;
-}
-
-void aceptar_movimiento(uint8_t *_casilla)
-{
-    casilla = _casilla;
-    aceptando = 1;
-    cuenta_atras = PERIODO;
-    while (!pulsacion)
-    {
-        PM_idle();
-        gestionar_eventos();
-    }
-    *casilla = 0;
 }

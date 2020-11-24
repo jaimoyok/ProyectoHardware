@@ -223,6 +223,19 @@ void voltear(int8_t tablero[][DIM], int8_t FA, int8_t CA, int8_t SF, int8_t SC, 
         tablero[FA][CA] = color;
     }
 }
+
+int reversi8_comprobar_movimiento(int8_t fila, int8_t columna) {
+		int flip = 0, SF, SC;
+		int i;
+    for (i = 0; i < DIM; i++) {
+        SF = vSF[i];
+        SC = vSC[i];
+        // flip: numero de fichas a voltear
+        if (patron_volteo(tablero, &flip, fila, columna, SF, SC, FICHA_NEGRA))
+            return 1;
+    }
+    return 0;
+}
 ////////////////////////////////////////////////////////////////////////////////
 // comprueba si hay que actualizar alguna ficha
 // no comprueba que el movimiento realizado sea v�lido
@@ -410,7 +423,7 @@ void reversi8_iniciar() {
     init_table(tablero, candidatas);
 }
 
-int reversi8_mover_jugador(int fila, int columna) {
+void reversi8_mover_jugador(int fila, int columna) {
     tablero[fila][columna] = FICHA_NEGRA;
     actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
     actualizar_candidatas(candidatas, fila, columna);
@@ -430,4 +443,8 @@ int reversi8_mover_ia(){
     }
     return 1;
    
+}
+
+void limpiar_casilla(int fila, int columna) {
+    tablero[fila][columna] = 0;
 }
