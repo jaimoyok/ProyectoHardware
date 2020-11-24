@@ -3,7 +3,7 @@
  #include "stdint.h"
  #include "GPIO.h"
 #include "stddef.h "
- enum{ DIM = 32};
+ enum{ DIM = 512};
 
 
 typedef struct {
@@ -65,8 +65,8 @@ uint8_t avanzar(){
   
 uint8_t cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData){
     elem_cola e;
-    //e.timestamp = temporizador0_leer();
-		e.timestamp = 0;
+    e.timestamp = temporizador1_leer();
+		//e.timestamp = 0;
     e.id_aux = ID_evento << 24 | (auxData & 0x00FFFFFF) ;
     if(insertarEvento(e))return 1;
     return 0;

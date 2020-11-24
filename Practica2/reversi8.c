@@ -1,4 +1,5 @@
 #include "stdint.h"
+#include "Eventos.h"
 
 // Tama�o del tablero
 enum { DIM=8 };
@@ -74,7 +75,7 @@ static int8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
      // VARIABLES PARA INTERACCIONAR CON LA ENTRADA SALIDA
      // Pregunta: �hay que hacer algo con ellas para que esto funcione bien?
      // (por ejemplo a�adir alguna palabra clave para garantizar que la sincronizaci�n a trav�s de esa variable funcione)
-static int8_t fila=0,
+volatile static int8_t fila=0,
 	    columna=0,
 	    ready = 0;
 
@@ -139,12 +140,12 @@ void init_table(int8_t tablero[][DIM], int8_t candidatas[][DIM])
 // CUIDADO: si el compilador coloca esta variable en un registro, no funcionar�.
 // Hay que definirla como "volatile" para forzar a que antes de cada uso la cargue de memoria
 
-void esperar_mov(int8_t *ready)
+/*void esperar_mov(int8_t *ready)
 {
     while (*ready == 0) {};  // bucle de espera de respuestas hasta que el se modifique el valor de ready (hay que hacerlo manualmente)
 
     *ready = 0;  //una vez que pasemos el bucle volvemos a fijar ready a 0;
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -198,30 +199,13 @@ int8_t ficha_valida(int8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_val
 // FA y CA son la fila y columna a analizar
 // longitud es un par�metro por referencia. Sirve para saber la longitud del patr�n que se est� analizando.
 //          Se usa para saber cuantas fichas habr�a que voltear
+extern int patron_volteo_arm_arm(int8_t tablero[][8], int *longitud, int8_t f, int8_t c, int8_t SF, int8_t SC, char color);
+
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
 {
-	int posicion_valida; // indica si la posici�n es valida y contiene una ficha de alg�n jugador
-	int8_t casilla;   // casilla es la casilla que se lee del tablero
-
-	FA = FA + SF;
-	CA = CA + SC;
-	casilla = ficha_valida(tablero, FA, CA, &posicion_valida);
-	while ((posicion_valida == 1) && (casilla != color))
-	// mientras la casilla est� en el tablero, no est� vac��a,
-	// y es del color rival seguimos buscando el patron de volteo
-	{
-		FA = FA + SF;
-		CA = CA + SC;
-		*longitud = *longitud + 1;
-		casilla = ficha_valida(tablero, FA, CA, &posicion_valida);
-	}
-    // si la ultima posici�n era v�lida y la ficha es del jugador actual,
-    // entonces hemos encontrado el patr�n
-	if ((posicion_valida == 1) && (casilla == color) && (*longitud >0))
-		return PATRON_ENCONTRADO; // si hay que voltear una ficha o m�s hemos encontrado el patr�n
-	else
-		return NO_HAY_PATRON; // si no hay que voltear no hay patr�n
+	patron_volteo_arm_arm(tablero,longitud,FA,CA,SF,SC,color);
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 // voltea n fichas en la direcci�n que toque
 // SF y SC son las cantidades a sumar para movernos en la direcci�n que toque
@@ -433,20 +417,26 @@ void reversi8()
     int8_t f, c;    // fila y columna elegidas por la m�quina para su movimiento
 
     init_table(tablero, candidatas);
+	iniciarOIreversi(tablero);
 
     while (fin == 0)
     {
         move = 0;
         esperar_movimiento();
+        
         // si la fila o columna son 8 asumimos que el jugador no puede mover
         if (leer_move() == 1)
         {
             fila = leer_fila();
             columna = leer_columna();
+            aceptar_movimiento();
+            if(leer_move() == 0)break;
             tablero[fila][columna] = FICHA_NEGRA;
             actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
             actualizar_candidatas(candidatas, fila, columna);
             move = 1;
+        }
+
         }
 
         // escribe el movimiento en las variables globales fila columna
