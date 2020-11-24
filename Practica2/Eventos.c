@@ -131,6 +131,8 @@ void gestionar_eventos() {
                 gestionar_boton0(1);
                 switch (state) {
                     case INICIO: {
+                        //Se ha realizado un movimiento.
+                        //A espera de confirmación temporal (3s) o por botón.
                         state = ACEPTAR;
                         temporizador_alarma_periodica(60);
                         actualizar_movimiento();
@@ -138,11 +140,14 @@ void gestionar_eventos() {
                         break;
                     }
                     case ACEPTAR: {
+                        //El usuario ha confirmado su movimiento. 
+                        //Se coloca la ficha y turno de la IA.
                         temporizador_desactivar_alarma();
                         reversi8_mover_jugador(fila, columna);
                         reversi8_mover_ia();
                     }
                     case FIN: {
+                        //Se ha terminado la partida y comienza una nueva.
                         reversi8_iniciar();
                         state = INICIO;
                     }
@@ -155,17 +160,21 @@ void gestionar_eventos() {
                 gestionar_boton1(1);
                 switch (state) {
                     case INICIO: {
+						//El jugador ha pasado de turno.
                         if (!reversi8_mover_ia()) {
+                            //Si la IA tambien pasa finaliza la partida.
                             state = FIN;
                         }
                         break;
                     }
                     case ACEPTAR: {
+                        //Se cancela el movimiento realizado.
                         temporizador_desactivar_alarma();
                         state = INICIO;
                         break;
                     }
                     case FIN: {
+                        //Se ha terminado la partida y comienza una nueva.
                         reversi8_iniciar();
                         state = INICIO;
                     }
@@ -183,6 +192,7 @@ void gestionar_eventos() {
                         parpadea(fila, columna);
                         cuenta_atras--;
                         if (cuenta_atras == 0) {
+                            //Se confirma el movimoento realizado al concluir el tiempo.
                             temporizador_desactivar_alarma();
                             reversi8_mover_jugador(fila, columna);
                             reversi8_mover_ia();

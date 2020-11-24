@@ -34,7 +34,7 @@ void eint1_init (void) {
 	eint1_nueva_pulsacion = 0;
 	EXTINT =  EXTINT | 1;        // clear interrupt flag
 
-	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
+	// configuration of the IRQ slot number 3 of the VIC for EXTINT0
 	VICVectAddr3 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
    
 	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Se Limpian los bits 29:28

@@ -406,32 +406,24 @@ int8_t __attribute__ ((aligned (8))) candidatas[DIM][DIM] =
 };
 
 
-void reversi8_iniciar()
-{
-
-	 ////////////////////////////////////////////////////////////////////
-	 // Tablero candidatas: se usa para no explorar todas las posiciones del tablero
-	// s�lo se exploran las que est�n alrededor de las fichas colocadas
-	 ////////////////////////////////////////////////////////////////////
-
+void reversi8_iniciar() {
     init_table(tablero, candidatas);
 }
 
-int reversi8_mover_jugador(int fila,int columna){
+int reversi8_mover_jugador(int fila, int columna) {
     tablero[fila][columna] = FICHA_NEGRA;
     actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
     actualizar_candidatas(candidatas, fila, columna);
-
-        }
-
-        // si la fila o columna son 8 asumimos que el jugador no puede mover
-       
+}      
 
 int reversi8_mover_ia(){
     int8_t f,c;
+	int done;
     // escribe el movimiento en las variables globales fila columna
-    if (elegir_mov(candidatas, tablero, &f, &c) == -1)return 0;
-    else{
+	done = elegir_mov(candidatas, tablero, &f, &c);
+    if (done == -1)
+			return 0;
+    else {
         tablero[f][c] = FICHA_BLANCA;
         actualizar_tablero(tablero, f, c, FICHA_BLANCA);
         actualizar_candidatas(candidatas, f, c);
