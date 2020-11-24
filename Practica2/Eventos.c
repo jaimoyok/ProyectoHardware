@@ -40,9 +40,6 @@ void iniciarOIreversi() {
     GPIO_escribir(24, 8, 0);
     GPIO_escribir(0, 3, 0);
     GPIO_escribir(8, 3, 0);
-    //Botones
-    //GPIO_marcar_entrada(16, 1);
-    //GPIO_marcar_entrada(14, 1);
     //Fila y columna
     GPIO_marcar_entrada(0, 3);
     GPIO_marcar_entrada(8, 3);
@@ -67,6 +64,7 @@ void aceptar_movimiento() {
     else {
         //Movimiento no valido
         GPIO_escribir(29,1,1);
+			  limpiar_casilla(fila, columna); //Se asegura que quede a 0
     }
 }
 
@@ -143,8 +141,7 @@ void gestionar_eventos() {
         controlar_alarmas();
         while (!nuevoEvento()) {
             if (state == INICIO) {
-                PM_idle();
-                // TODO: Hacerlo con PM_power_down();
+                PM_power_down();
             }
             else {
                 PM_idle();
@@ -225,8 +222,8 @@ void gestionar_eventos() {
                         if (cuenta_atras == 0) {
                             aceptar_movimiento();
                             state = INICIO;
-                        }
-                        numero_pulsados--;
+														numero_pulsados--;
+                        }                 
                         break;
                     }
                     default:

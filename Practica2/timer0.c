@@ -64,7 +64,7 @@ void temporizador_alarma_periodica(int _retardo){
 }
 
 void temporizador_desactivar_alarma(void){
-  alarmaActivada=0;
+  periodoActivado=0;
 }
 
 /* Timer Counter 0 Interrupt executes each 10ms @ 60 MHz CPU Clock */
