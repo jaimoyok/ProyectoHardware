@@ -57,8 +57,8 @@ void wait (void)  {                         /* wait function */
 }*/
 
 
-int main (void){
-  	
- reversi8();
+int main (void){ 	
+ 	iniciarOIreversi();
+ 	gestionar_eventos();
 	return 0;
 }

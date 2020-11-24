@@ -1,5 +1,6 @@
 #include "stdint.h"
 #include "Eventos.h"
+#include "reversi8.h"
 
 // Tama�o del tablero
 enum { DIM=8 };
@@ -375,7 +376,10 @@ void actualizar_candidatas(int8_t candidatas[][DIM], int8_t f, int8_t c)
         candidatas[f][c+1] = SI;
 }
 
-
+void parpadea(int fila,int  columna){
+    if(tablero[fila][columna] == 0)tablero[fila][columna] = 2;
+    else tablero[fila][columna] = 0;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -388,14 +392,8 @@ void actualizar_candidatas(int8_t candidatas[][DIM], int8_t f, int8_t c)
 // en esta versi�n el humano lleva negras y la m�quina blancas
 // no se comprueba que el humano mueva correctamente.
 // S�lo que la m�quina realice un movimiento correcto.
-void reversi8()
-{
 
-	 ////////////////////////////////////////////////////////////////////
-	 // Tablero candidatas: se usa para no explorar todas las posiciones del tablero
-	// s�lo se exploran las que est�n alrededor de las fichas colocadas
-	 ////////////////////////////////////////////////////////////////////
-	int8_t __attribute__ ((aligned (8))) candidatas[DIM][DIM] =
+int8_t __attribute__ ((aligned (8))) candidatas[DIM][DIM] =
     {
         {NO,NO,NO,NO,NO,NO,NO,NO},
         {NO,NO,NO,NO,NO,NO,NO,NO},
@@ -405,53 +403,39 @@ void reversi8()
         {NO,NO,NO,NO,NO,NO,NO,NO},
         {NO,NO,NO,NO,NO,NO,NO,NO},
         {NO,NO,NO,NO,NO,NO,NO,NO}
-    };
+};
 
 
-    int done;     // la m�quina ha conseguido mover o no
-    int move = 0; // el humano ha conseguido mover o no
-    int blancas, negras; // n�mero de fichas de cada color
-    int fin = 0;  // fin vale 1 si el humano no ha podido mover
-                  // (ha introducido un valor de movimiento con alg�n 8)
-                  // y luego la m�quina tampoco puede
-    int8_t f, c;    // fila y columna elegidas por la m�quina para su movimiento
+void reversi8_iniciar()
+{
+
+	 ////////////////////////////////////////////////////////////////////
+	 // Tablero candidatas: se usa para no explorar todas las posiciones del tablero
+	// s�lo se exploran las que est�n alrededor de las fichas colocadas
+	 ////////////////////////////////////////////////////////////////////
 
     init_table(tablero, candidatas);
-	iniciarOIreversi(tablero);
+}
 
-    while (fin == 0)
-    {
-        move = 0;
-        esperar_movimiento();
-        
+int reversi8_mover_jugador(int fila,int columna){
+    tablero[fila][columna] = FICHA_NEGRA;
+    actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
+    actualizar_candidatas(candidatas, fila, columna);
+
+        }
+
         // si la fila o columna son 8 asumimos que el jugador no puede mover
-        if (leer_move() == 1)
-        {
-            fila = leer_fila();
-            columna = leer_columna();
-            aceptar_movimiento();
-            if(leer_move() == 0)break;
-            tablero[fila][columna] = FICHA_NEGRA;
-            actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
-            actualizar_candidatas(candidatas, fila, columna);
-            move = 1;
-        }
+       
 
-        }
-
-        // escribe el movimiento en las variables globales fila columna
-        done = elegir_mov(candidatas, tablero, &f, &c);
-        if (done == -1)
-        {
-            if (move == 0)
-                fin = 1;
-        }
-        else
-        {
-            tablero[f][c] = FICHA_BLANCA;
-            actualizar_tablero(tablero, f, c, FICHA_BLANCA);
-            actualizar_candidatas(candidatas, f, c);
-        }
+int reversi8_mover_ia(){
+    int8_t f,c;
+    // escribe el movimiento en las variables globales fila columna
+    if (elegir_mov(candidatas, tablero, &f, &c) == -1)return 0;
+    else{
+        tablero[f][c] = FICHA_BLANCA;
+        actualizar_tablero(tablero, f, c, FICHA_BLANCA);
+        actualizar_candidatas(candidatas, f, c);
     }
-    contar(tablero, &blancas, &negras);
+    return 1;
+   
 }

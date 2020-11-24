@@ -9,16 +9,21 @@ static volatile int eint0_nueva_pulsacion = 0;
 
 void eint0_ISR (void) __irq {
 	VICIntEnClr = VICIntEnClr | 0x00004000;	//Deshabilita EINT0
-	PINSEL1 		= PINSEL1 & 0xfffffffC;
-	cola_guardar_eventos(EV_BOTON,0);	
+	cola_guardar_eventos(EV_BOTON0,0);	
 	EXTINT =  EXTINT | 1;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint0_nueva_pulsacion = 1;
 }
 
+int8_t eint0_esta_pulsado(){
+	EXTINT =  EXTINT | 1;
+	if(!(EXTINT & 1))return 1;
+	return 0;
+	
+}
+
 void eint0_clear_nueva_pulsacion(void){
-	eint0_nueva_pulsacion = 0;
-	PINSEL1 = PINSEL1 | 1;	
+	eint0_nueva_pulsacion = 0;	
 	VICIntEnable = VICIntEnable | 0x00004000;
 };
 

@@ -531,6 +531,11 @@
               <FileType>2</FileType>
               <FilePath>.\patron_volteo_arm_arm.s</FilePath>
             </File>
+            <File>
+              <FileName>Eventos.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Eventos.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

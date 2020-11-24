@@ -7,6 +7,7 @@
  #include "timer1.h"
  #include "GPIO.h"
  #include "Power_management.h"
+ #include "reversi8.h"
 
  typedef enum {
      no_pulsado = 0,
@@ -22,15 +23,13 @@ static volatile int fila;
 static volatile int columna;
 static volatile int cuenta_atras= PERIODO;
 static volatile int aceptando = 0;
-int ** tablero;
- // sólo llamar si hay interrupción de boton
- // o estoy estado pulsado
+static volatile uint8_t * casilla;
 
-void iniciarOIreversi(int **_tablero){
-    //guardar la direccion de tablero
-    tablero = _tablero;
+typedef enum {INICIO,ACEPTAR,MOVER,FIN}Estado;
+
+void iniciarOIreversi(){
   //activar perifericos
-	 eint0_init();
+	eint0_init();
   eint1_init();
   GPIO_iniciar();
 	GPIO_marcar_salida(0,32);
@@ -43,33 +42,12 @@ void iniciarOIreversi(int **_tablero){
   GPIO_marcar_entrada(8,3);
   temporizador0_iniciar();
   temporizador1_iniciar();
-  temporizador_alarma_periodica(RETARDO);
+	reversi8_iniciar();
 }
 
  void actualizar_movimiento(void){
      fila = GPIO_leer(0,3);
      columna = GPIO_leer(8,3);
- }
-
-int leer_pulsaciones(void){
-  return numero_pulsaciones;
-}
-
- int leer_move(void){
-     return mover;
- }
-
- int leer_fila(void){
-     return fila;
- }
-
-  int leer_columna(void){
-     return columna;
- }
-
- void parpadea(void){
-     if(tablero[fila][columna] == 2)tablero[fila][columna] = 0;
-     else tablero[fila][columna] == 2;
  }
 
  void gestionar_boton0(uint8_t interrupcion_boton) {
@@ -129,45 +107,95 @@ void gestionar_led(void){
   estado = !estado;
 }
 
-void gestionar_eventos(void)
- {
-     while(nuevoEvento()) {
-       uint8_t evento = 0;
-       uint32_t data = 0;
-       uint32_t time = 0;
-       siguienteEvento(&data, &evento, &time);
-         switch (evento) {
-             case EV_BOTON:{
-               pulsacion = 1;
-                if(data == 1){
-                    mover = 0;
-                    gestionar_boton1(1);
-                }
-                else{
-                     mover = 1;
-                     gestionar_boton0(1);
-                }
+void gestionar_eventos(void){  
+    Estado state = INICIO;
+    uint8_t evento = 0;
+    uint32_t data = 0;
+    uint32_t time = 0;
+    while(1){
+        while(!nuevoEvento()){
+            if(state == INICIO){
+							 PM_idle();
+               // PM_power_down();
+            }
+            else{
+                PM_idle();
+            }
+            
 
-                 break;}
-             case EV_TIMER0: {
-                  if(data == 0){
-                    if(aceptando){
-                        cuenta_atras--;
-                        parpadear();
+        }
+        siguienteEvento(&data, &evento, &time);
+        switch (evento) {
+            case EV_BOTON0:{
+            gestionar_boton0(1);
+            switch (state) {
+                case INICIO:{
+                    state = ACEPTAR;
+                    temporizador_alarma_periodica(60);
+                    actualizar_movimiento();
+                    cuenta_atras = RETARDO;
+                    break;
                     }
-                    gestionar_boton1(0);
-                    gestionar_boton0(0);
-                    gestionar_led();
-                    break; }
-                  }
+                case ACEPTAR:{
+                    temporizador_desactivar_alarma();
+                    reversi8_mover_jugador(fila,columna);
+                    reversi8_mover_ia();
+                 }
+                case FIN:{
+                    reversi8_iniciar(); 
+                    state= INICIO;
+                }
+                        
+                default:
+                        break;
+                } 
+            }   
+            case EV_BOTON1:{
+                gestionar_boton1(1);
+                switch (state){
+                    case INICIO:{
+                        if(!reversi8_mover_ia()){
+                            state = FIN;
+                        }
+                        break;
+                    }
+                    case ACEPTAR:{
+                        temporizador_desactivar_alarma();
+                        state = INICIO;
+                        break;
+                    }
+                    case FIN:{
+                        reversi8_iniciar();
+                        state = INICIO;
+                    }
+                    default:
+                        break;
+                }
+            }
+           
+            case EV_TIMER0: {
+                gestionar_boton1(0);
+                gestionar_boton0(0);
+                gestionar_led();
+                switch (state){
+                    case ACEPTAR:{
+                        parpadea(fila,columna);
+                        cuenta_atras--;
+                        if (cuenta_atras == 0){
+                            temporizador_desactivar_alarma();
+                            reversi8_mover_jugador(fila,columna);
+                            reversi8_mover_ia();
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                    }
 
-         }
-         if(cuenta_atras == 0 & aceptando){
-           pulsacion = 1;
-         }
-		avanzar();
-     }
-
+                }
+            }
+				avanzar();
+	    }
  }
 
 void esperar_movimiento(void){
@@ -180,12 +208,13 @@ void esperar_movimiento(void){
 	 cuenta_atras = PERIODO;
  }
  
- void aceptar_movimiento(void){
+ void aceptar_movimiento(uint8_t *_casilla){
+    casilla = _casilla;
     aceptando = 1;
     cuenta_atras = PERIODO;
     while(!pulsacion){
         PM_idle();
         gestionar_eventos();
      }
-     tablero[fila][columna] = 0;
+     *casilla = 0;
  }
