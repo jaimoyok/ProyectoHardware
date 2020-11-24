@@ -8,16 +8,22 @@ static volatile int eint1_nueva_pulsacion = 0;
 
 void eint1_ISR (void) __irq {
 	VICIntEnClr = VICIntEnClr | 0x00008000;	//Deshabilita EINT1
-	PINSEL0 		= PINSEL0 & 0xcfffffff;
-	cola_guardar_eventos(EV_BOTON,1);	
-	EXTINT =  EXTINT | 1;        // clear interrupt flag        
+	cola_guardar_eventos(EV_BOTON1,1);	
+	EXTINT =  EXTINT | 2;        // clear interrupt flag        
 	VICVectAddr = 0;             // Acknowledge Interrupt
 	eint1_nueva_pulsacion = 1;
 }
 
+int8_t eint1_esta_pulsado(){
+	EXTINT =  EXTINT | 2;
+	if(!(EXTINT & 2))
+		return 0;
+	else 
+		return 1;
+
+}
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
-	PINSEL0 = PINSEL0 | 0x20000000;
 	VICIntEnable = VICIntEnable | 0x00008000;
 };
 
@@ -30,7 +36,7 @@ void eint1_init (void) {
 	eint1_nueva_pulsacion = 0;
 	EXTINT =  EXTINT | 1;        // clear interrupt flag
 
-	// configuration of the IRQ slot number 2 of the VIC for EXTINT0
+	// configuration of the IRQ slot number 3 of the VIC for EXTINT0
 	VICVectAddr3 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
    
 	PINSEL0 		= PINSEL0 & 0xcfffffff;	//Se Limpian los bits 29:28

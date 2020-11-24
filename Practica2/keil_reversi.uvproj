@@ -487,11 +487,6 @@
               <FilePath>.\boton_eint1.c</FilePath>
             </File>
             <File>
-              <FileName>pulsacion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\pulsacion.c</FilePath>
-            </File>
-            <File>
               <FileName>reversi8.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\reversi8.c</FilePath>
@@ -530,6 +525,16 @@
               <FileName>patron_volteo_arm_arm.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\patron_volteo_arm_arm.s</FilePath>
+            </File>
+            <File>
+              <FileName>Eventos.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Eventos.h</FilePath>
+            </File>
+            <File>
+              <FileName>reversi8.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\reversi8.h</FilePath>
             </File>
           </Files>
         </Group>

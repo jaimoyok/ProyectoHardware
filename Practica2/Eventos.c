@@ -1,97 +1,104 @@
- #include "cola.h"
- #include "stdint.h"
- #include "Eventos.h"
- #include "boton_eint0.h"
- #include "boton_eint1.h"
- #include "timer0.h"
- #include "timer1.h"
- #include "GPIO.h"
- #include "Power_management.h"
+#include "cola.h"
+#include "stdint.h"
+#include "Eventos.h"
+#include "boton_eint0.h"
+#include "boton_eint1.h"
+#include "timer0.h"
+#include "timer1.h"
+#include "GPIO.h"
+#include "Power_management.h"
+#include "reversi8.h"
 
- typedef enum {
-     no_pulsado = 0,
-     pulsado = 1
- } estado_boton_t;
-
- const int  RETARDO = 250; //periodo de comprobacion
- const int  PERIODO = 12;    //numero de alarmas que se espera para hacer un movimiento
-static volatile int numero_pulsaciones=0;
+const int RETARDO = 250; //periodo de comprobacion
+const int PERIODOS = 12;  //numero de alarmas que se espera para hacer un movimiento
+static volatile int numero_pulsados = 0;
 static volatile int pulsacion = 0;
 static volatile int mover = 0;
 static volatile int fila;
 static volatile int columna;
-static volatile int cuenta_atras= PERIODO;
+static volatile int cuenta_atras = PERIODOS;
 static volatile int aceptando = 0;
-int ** tablero;
- // sólo llamar si hay interrupción de boton
- // o estoy estado pulsado
 
-void iniciarOIreversi(int **_tablero){
-    //guardar la direccion de tablero
-    tablero = _tablero;
-  //activar perifericos
-	 eint0_init();
-  eint1_init();
-  GPIO_iniciar();
-	GPIO_marcar_salida(0,32);
-	GPIO_escribir(24,8,0);
-	GPIO_escribir(0,3,0);
-	GPIO_escribir(8,3,0);
-	GPIO_marcar_entrada(16,1);
-	GPIO_marcar_entrada(14,1);
-  GPIO_marcar_entrada(0,3);
-  GPIO_marcar_entrada(8,3);
-  temporizador0_iniciar();
-  temporizador1_iniciar();
-  temporizador_alarma_periodica(RETARDO);
+typedef enum {
+    no_pulsado = 0,
+    pulsado = 1
+} estado_boton_t;
+
+typedef enum {
+    INICIO,
+    ACEPTAR,
+    MOVER,
+    FIN
+} Estado;
+
+void iniciarOIreversi() {
+    //activar perifericos
+    eint0_init();
+    eint1_init();
+    GPIO_iniciar();
+    GPIO_marcar_salida(0, 32);
+    GPIO_escribir(24, 8, 0);
+    GPIO_escribir(0, 3, 0);
+    GPIO_escribir(8, 3, 0);
+    //Fila y columna
+    GPIO_marcar_entrada(0, 3);
+    GPIO_marcar_entrada(8, 3);
+    temporizador0_iniciar();
+    temporizador1_iniciar();
+	  temporizador0_empezar();
+    temporizador1_empezar();
+    reversi8_iniciar();
 }
 
- void actualizar_movimiento(void){
-     fila = GPIO_leer(0,3);
-     columna = GPIO_leer(8,3);
- }
-
-int leer_pulsaciones(void){
-  return numero_pulsaciones;
+void leer_movimiento() {
+    fila = GPIO_leer(0, 3);
+    columna = GPIO_leer(8, 3);
 }
 
- int leer_move(void){
-     return mover;
- }
+void aceptar_movimiento() {
+    GPIO_escribir(29,1,0); //Se limpia la casilla de movimiento incorrecto.
+    if (reversi8_comprobar_movimiento(fila, columna)) {
+        reversi8_mover_jugador(fila, columna);
+        reversi8_mover_ia();
+    }
+    else {
+        //Movimiento no valido
+        GPIO_escribir(29,1,1);
+			  limpiar_casilla(fila, columna); //Se asegura que quede a 0
+    }
+}
 
- int leer_fila(void){
-     return fila;
- }
+void controlar_alarmas() {
+    static int alarma_activada = 0;
+    if (numero_pulsados > 0 && alarma_activada == 0) { //Numero pulsados > 0 (algo requiere alarma)
+        alarma_activada = 1;
+        temporizador_alarma_periodica(RETARDO);
+    }
+    else if (numero_pulsados == 0 && alarma_activada == 1) {
+        alarma_activada = 0;
+        temporizador_desactivar_alarma();
+    }
+}
 
-  int leer_columna(void){
-     return columna;
- }
+void gestionar_boton0(uint8_t interrupcion_boton) {
 
- void parpadea(void){
-     if(tablero[fila][columna] == 2)tablero[fila][columna] = 0;
-     else tablero[fila][columna] == 2;
- }
+    static estado_boton_t estado = no_pulsado;
 
- void gestionar_boton0(uint8_t interrupcion_boton) {
+    if (interrupcion_boton == 0 && estado == no_pulsado) {
+        return;
+    }
 
-     static estado_boton_t estado = no_pulsado;
-
-     if (interrupcion_boton == 0 && estado == no_pulsado) {
-         return;
-     }
-
-     // ha habido interrupcion
-     if(estado == no_pulsado) {
+    // ha habido interrupcion
+    if (estado == no_pulsado) {
         estado = pulsado;
-        numero_pulsaciones ++;
-     }
-     else {
-			 //leeemos para comprobar si se activa el boton
-		int boton = GPIO_leer(16,1);
-				//si esta a 1 es que ya se ha dejado de pulsar
-        if(boton == 1) {
+        numero_pulsados++;
+    }
+    else {
+        //Si boton es 1 se ha dejado de pulsar
+        if (!eint0_esta_pulsado()) {
             eint0_clear_nueva_pulsacion();
             estado = no_pulsado;
+            numero_pulsados--;
         }
     }
 }
@@ -105,87 +112,126 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
     }
 
     // ha habido interrupcion
-    if(estado == no_pulsado) {
-       estado = pulsado;
-       numero_pulsaciones++;
+    if (estado == no_pulsado) {
+        estado = pulsado;
+        numero_pulsados++;
     }
     else {
-      //leeemos para comprobar si se activa el boton
-
-       //int boton = GPIO_leer(16,1);
-   int boton = GPIO_leer(14,1);
-       //si esta a 1 es que ya se ha dejado de pulsar
-       if(boton == 1) {
-           eint1_clear_nueva_pulsacion();
-           estado = no_pulsado;
-       }
-   }
+        //Si boton es 1 se ha dejado de pulsar
+        if (!eint1_esta_pulsado()) {
+            eint1_clear_nueva_pulsacion();
+            estado = no_pulsado;
+            numero_pulsados--;
+        }
+    }
 }
 
-
-void gestionar_led(void){
-  static int estado = 0;
-  GPIO_escribir(31,1,estado);
-  estado = !estado;
+void gestionar_led() {
+    static int estado = 0;
+    GPIO_escribir(31, 1, estado);
+    estado = !estado;
 }
 
-void gestionar_eventos(void)
- {
-     while(nuevoEvento()) {
-       uint8_t evento = 0;
-       uint32_t data = 0;
-       uint32_t time = 0;
-       siguienteEvento(&data, &evento, &time);
-         switch (evento) {
-             case EV_BOTON:{
-               pulsacion = 1;
-                if(data == 1){
-                    mover = 0;
-                    gestionar_boton1(1);
-                }
-                else{
-                     mover = 1;
-                     gestionar_boton0(1);
-                }
-
-                 break;}
-             case EV_TIMER0: {
-                  if(data == 0){
-                    if(aceptando){
-                        cuenta_atras--;
-                        parpadear();
+void gestionar_eventos() {
+    Estado state = INICIO;
+    uint8_t evento = 0;
+    uint32_t data = 0;
+    uint32_t time = 0;
+    while (1) {
+        controlar_alarmas();
+        while (!nuevoEvento()) {
+            if (state == INICIO) {
+                PM_power_down();
+            }
+            else {
+                PM_idle();
+            }
+        }
+        siguienteEvento(&data, &evento, &time);
+        switch (evento) {
+            case EV_BOTON0: {
+                gestionar_boton0(1);
+                switch (state) {
+                    case INICIO: {
+                        //Se ha realizado un movimiento.
+                        //A espera de confirmación temporal (3s) o por botón.
+                        state = ACEPTAR;
+                        numero_pulsados++;
+                        leer_movimiento();
+                        cuenta_atras = PERIODOS;
+                        break;
                     }
-                    gestionar_boton1(0);
-                    gestionar_boton0(0);
-                    gestionar_led();
-                    break; }
-                  }
+                    case ACEPTAR: {
+                        //El usuario ha confirmado su movimiento. 
+                        //Se coloca la ficha y turno de la IA.
+                        aceptar_movimiento();
+                        state = INICIO;
+                        numero_pulsados--;
+                        break;
+                    }
+                    case FIN: {
+                        //Se ha terminado la partida y comienza una nueva.
+                        reversi8_iniciar();
+                        state = INICIO;
+                        break;
+                    }
 
-         }
-         if(cuenta_atras == 0 & aceptando){
-           pulsacion = 1;
-         }
-		avanzar();
-     }
+                    default:
+                        break;
+                }
+								break;
+            }
+            case EV_BOTON1: {
+                gestionar_boton1(1);
+                switch (state) {
+                    case INICIO: {
+						//El jugador ha pasado de turno.
+                        if (!reversi8_mover_ia()) {
+                            //Si la IA tambien pasa finaliza la partida.
+                            state = FIN;
+                        }
+                        break;
+                    }
+                    case ACEPTAR: {
+                        //Se cancela el movimiento realizado.
+                        numero_pulsados--;
+                        limpiar_casilla(fila, columna); //Se asegura de que se no se modifica la casilla
+												state = INICIO;
+                        break;
+                    }
+                    case FIN: {
+                        //Se ha terminado la partida y comienza una nueva.
+                        reversi8_iniciar();
+                        state = INICIO;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+								break;
+            }
 
- }
-
-void esperar_movimiento(void){
-     while(!pulsacion){
-        PM_idle();
-        gestionar_eventos();
-     }
-     actualizar_movimiento();
-     pulsacion = 0;
-	 cuenta_atras = PERIODO;
- }
- 
- void aceptar_movimiento(void){
-    aceptando = 1;
-    cuenta_atras = PERIODO;
-    while(!pulsacion){
-        PM_idle();
-        gestionar_eventos();
-     }
-     tablero[fila][columna] = 0;
- }
+            case EV_TIMER0: {
+                gestionar_boton1(0);
+                gestionar_boton0(0);
+                gestionar_led();
+                switch (state) {
+                    case ACEPTAR: {
+                        parpadea(fila, columna);
+                        cuenta_atras--;
+                        if (cuenta_atras == 0) {
+                            aceptar_movimiento();
+                            state = INICIO;
+														numero_pulsados--;
+                        }                 
+                        break;
+                    }
+                    default:
+                        break;
+                }
+								break;
+            }
+        }
+        avanzar();
+    }
+}

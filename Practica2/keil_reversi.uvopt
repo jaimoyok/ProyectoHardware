@@ -142,7 +142,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGDARM</Key>
-          <Name>(134=-1,-1,-1,-1,0)(135=-1,-1,-1,-1,0)(107=-1,-1,-1,-1,0)(108=98,129,255,249,0)(106=994,204,1272,558,0)(105=476,70,666,314,0)(80=700,201,1211,611,0)(104=1042,200,1358,619,0)(100=701,222,1284,404,1)(113=220,244,718,767,0)(112=220,58,718,768,0)(136=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(110=680,226,1366,768,0)(111=-1,-1,-1,-1,0)(114=277,320,963,768,0)(115=-1,-1,-1,-1,0)(116=790,303,1076,593,0)</Name>
+          <Name>(134=-1,-1,-1,-1,0)(135=-1,-1,-1,-1,0)(107=-1,-1,-1,-1,0)(108=98,129,255,249,0)(106=994,204,1272,558,0)(105=476,70,666,314,0)(80=700,201,1211,611,0)(104=1042,200,1358,619,0)(100=783,574,1366,756,0)(113=220,244,718,767,0)(112=220,58,718,768,0)(136=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(110=680,226,1366,768,0)(111=-1,-1,-1,-1,0)(114=277,320,963,768,0)(115=-1,-1,-1,-1,0)(116=790,303,1076,593,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -156,7 +156,7 @@
           <Type>0</Type>
           <LineNumber>40</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>2340</Address>
+          <Address>2752</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -170,76 +170,44 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>422</LineNumber>
+          <LineNumber>41</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>4716</Address>
+          <Address>2768</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\reversi8.c</Filename>
+          <Filename>.\cola.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\keil_reversi\reversi8.c\422</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>431</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>4520</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\reversi8.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>443</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\reversi8.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>444</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\reversi8.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\keil_reversi\cola.c\41</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x40000160</ItemText>
+          <ItemText>0x40001060</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
+      <MemoryWindow2>
+        <Mm>
+          <WinNumber>2</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>0x40001060</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow2>
+      <MemoryWindow4>
+        <Mm>
+          <WinNumber>4</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>tablero[fila][columna]</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow4>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -463,18 +431,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\pulsacion.c</PathWithFileName>
-      <FilenameWithoutPath>pulsacion.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>13</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>.\reversi8.c</PathWithFileName>
       <FilenameWithoutPath>reversi8.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -482,7 +438,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>14</FileNumber>
+      <FileNumber>13</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -494,7 +450,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>15</FileNumber>
+      <FileNumber>14</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -506,7 +462,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>16</FileNumber>
+      <FileNumber>15</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -518,7 +474,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>17</FileNumber>
+      <FileNumber>16</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -530,7 +486,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>18</FileNumber>
+      <FileNumber>17</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -542,7 +498,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>19</FileNumber>
+      <FileNumber>18</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -554,13 +510,37 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>20</FileNumber>
+      <FileNumber>19</FileNumber>
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\patron_volteo_arm_arm.s</PathWithFileName>
       <FilenameWithoutPath>patron_volteo_arm_arm.s</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>20</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\Eventos.h</PathWithFileName>
+      <FilenameWithoutPath>Eventos.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>21</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\reversi8.h</PathWithFileName>
+      <FilenameWithoutPath>reversi8.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
