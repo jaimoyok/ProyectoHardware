@@ -492,11 +492,6 @@
               <FilePath>.\reversi8.c</FilePath>
             </File>
             <File>
-              <FileName>Time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Time.c</FilePath>
-            </File>
-            <File>
               <FileName>boton_eint1.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\boton_eint1.h</FilePath>
