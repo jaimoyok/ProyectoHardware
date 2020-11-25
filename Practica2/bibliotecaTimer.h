@@ -1,10 +1,10 @@
-#include <LPC210X.H>                            // LPC21XX Peripheral Registers
-#include "timer0.h"
 #include "pulsacion.h"
+#include "timer0.h"
+#include <LPC210X.H> // LPC21XX Peripheral Registers
 
-struct time{
-    int seconds;
-    int miliseconds;
+struct time {
+  int seconds;
+  int miliseconds;
 }
 
 void temporizador_iniciar();

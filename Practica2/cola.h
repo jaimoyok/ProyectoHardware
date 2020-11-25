@@ -1,7 +1,7 @@
 #ifndef __COLA__H
 #define __COLA__H
 #include "stdint.h"
-//tamnyo cola
+// tamnyo cola
 
 void cola_iniciar(void);
 int tamanyo(void);

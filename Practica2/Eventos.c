@@ -45,7 +45,7 @@ void iniciarOIreversi() {
   // iniciar juego
   reversi8_iniciar();
   // iniciar contador para la IA
-  cnt = iniciar_contador();
+  //cnt = iniciar_contador();
 }
 
 void leer_movimiento() {
@@ -58,9 +58,9 @@ void aceptar_movimiento() {
   if (reversi8_comprobar_movimiento(fila, columna)) {
     // si el movimiento es valido se procesa y la ia juega
     reversi8_mover_jugador(fila, columna);
-    resetear_contador(cnt);
+    //resetear_contador(cnt);
     reversi8_mover_ia();
-    tiempoIA = contador(cnt);
+    //tiempoIA = contador(cnt);
   } else {
     // si movimiento no valido se activa bit para indicarlo
     GPIO_escribir(29, 1, 1);
@@ -197,11 +197,11 @@ void gestionar_eventos() {
       switch (state) {
       case INICIO: {
         // El jugador ha pasado de turno.
-        resetear_contador(cnt);
+        //resetear_contador(cnt);
         if (!reversi8_mover_ia()) {
           // Si la IA tambien pasa finaliza la partida.
           state = FIN;
-          tiempoIA = contador(cnt);
+          //tiempoIA = contador(cnt);
         }
         break;
       }
