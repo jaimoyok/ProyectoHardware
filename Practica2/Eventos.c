@@ -18,6 +18,8 @@ static volatile int fila;
 static volatile int columna;
 static volatile int cuenta_atras = PERIODOS;
 static volatile int aceptando = 0;
+int cnt;
+int tiempoIA;
 
 typedef enum {
     no_pulsado = 0,
@@ -48,6 +50,7 @@ void iniciarOIreversi() {
 	  temporizador0_empezar();
     temporizador1_empezar();
     reversi8_iniciar();
+    cnt = iniciar_contador();
 }
 
 void leer_movimiento() {
@@ -59,7 +62,9 @@ void aceptar_movimiento() {
     GPIO_escribir(29,1,0); //Se limpia la casilla de movimiento incorrecto.
     if (reversi8_comprobar_movimiento(fila, columna)) {
         reversi8_mover_jugador(fila, columna);
+        resetear_contador(cnt);
         reversi8_mover_ia();
+        tiempoIA = contador(cnt);
     }
     else {
         //Movimiento no valido
