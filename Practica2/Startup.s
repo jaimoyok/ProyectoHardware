@@ -326,6 +326,6 @@ PLL_Loop2       LDR     R3, [R0, #PLLSTAT_OFS]
                 STR     R3, [R0, #PLLCON_OFS]
                 STR     R1, [R0, #PLLFEED_OFS]
                 STR     R2, [R0, #PLLFEED_OFS]
-                BX   	LR
+				BX 		LR
 
                 END
