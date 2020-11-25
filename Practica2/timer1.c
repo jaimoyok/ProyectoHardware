@@ -32,14 +32,19 @@ void temporizador1_iniciar (void) {
     VICIntEnable = VICIntEnable | 0x00000020; // Enable Timer1 Interrupt
 }
 
+
+//inicia el contador principal
 void temporizador1_empezar(void) {
   timer1_int_count = 0;
 }
 
+
+//devuelve el valor actual del contador principal
 unsigned int temporizador1_leer(void){
 	return timer1_int_count;
 };
 
+//para el temporizador y devuelve el valor que toma el contador principañ
 unsigned int temporizador1_parar(void) {
   VICIntEnClr = VICIntEnClr | 0x00000020;
   return temporizador1_leer();

@@ -27,12 +27,13 @@ volatile cola_t cola;
 		cola_guardar_eventos(0,0);
     }
 
-
+//devuelve el tamnyo de la cola
 size_t cola_tamanyo(){
     return cola.n;
 }
 
-
+//inserta un envento en la cola si es posible y devuelve 1
+//si no es posible se queda en un bucle infinito
 uint8_t insertarEvento(elem_cola e){
     //GPIO
     if (cola.n == DIM){ 				
@@ -45,9 +46,14 @@ uint8_t insertarEvento(elem_cola e){
     cola.tail++;
     return 1;
 }
+
+//devuelve 1 si existe un evento que procesar
+//si no devuelve un 0
 uint8_t nuevoEvento(){
     return cola.n != 0;
 }
+
+//rellena data, evento y time con los datos del primer evento de la lista
 void siguienteEvento(uint32_t *data, uint8_t *evento, uint32_t *time){
     if(0 == cola.n) {
     while(1);
@@ -56,6 +62,8 @@ void siguienteEvento(uint32_t *data, uint8_t *evento, uint32_t *time){
     *time = cola.data[cola.head].timestamp;
     *data = cola.data[cola.head].id_aux & 0x00FFFFFF;
 }
+
+//descarta el primer evento de la cola
 uint8_t avanzar(){
     if ( cola.n == 0)return 0;
     cola.head++;

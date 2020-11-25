@@ -143,15 +143,20 @@ void gestionar_eventos() {
     uint32_t data = 0;
     uint32_t time = 0;
     while (1) {
+        //comprobamos si hay que encender o aparar la alarma??
         controlar_alarmas();
+        //esperamos a que exista un evento que procesar
         while (!nuevoEvento()) {
+            //si estamos en el estado inicio dormimos el procesador
             if (state == INICIO) {
                 PM_power_down();
             }
+            //si no necesitamos recibir los eventos del timer  
             else {
                 PM_idle();
             }
         }
+        //leemos el siguient evento
         siguienteEvento(&data, &evento, &time);
         switch (evento) {
             case EV_BOTON0: {
@@ -227,7 +232,7 @@ void gestionar_eventos() {
                         if (cuenta_atras == 0) {
                             aceptar_movimiento();
                             state = INICIO;
-														numero_pulsados--;
+							numero_pulsados--;
                         }                 
                         break;
                     }

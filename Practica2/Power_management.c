@@ -3,12 +3,15 @@
 // Set the processor into power down state 
 // The watchdog cannot wake up the processor from power down
 void PM_power_down (void)  {
-  EXTWAKE = 3; // 	 will awake the processor
+	//ponemos el procesador en modo power down
+ 	EXTWAKE = 3; 
 	//PCONP |= 0x6;	//No duerme los timers
 	PCON |= 0x02; 
+	//vuelves a poner el procesador a 60MHz
 	Switch_to_PLL();
 }
 
 void PM_idle(void) {
-  PCON |= 0x01;
+	//duermes el procesador sin parar los timers;
+  	PCON |= 0x01;
 }

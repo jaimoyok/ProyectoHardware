@@ -7,6 +7,8 @@
 // variable que se activa al detectar una nueva pulsaci�n
 static volatile int eint0_nueva_pulsacion = 0;
 
+
+//rutina de interrupcion
 void eint0_ISR (void) __irq {
 	VICIntEnClr = VICIntEnClr | 0x00004000;	//Deshabilita EINT0
 	cola_guardar_eventos(EV_BOTON0,0);	
@@ -15,6 +17,7 @@ void eint0_ISR (void) __irq {
 	eint0_nueva_pulsacion = 1;
 }
 
+//indica si el boton se mantiene pulsado
 int8_t eint0_esta_pulsado(){
 	EXTINT =  EXTINT | 1;
 	if(!(EXTINT & 1))		
@@ -24,15 +27,20 @@ int8_t eint0_esta_pulsado(){
 	
 }
 
+//reactiva la interrupcion de boton
 void eint0_clear_nueva_pulsacion(void){
 	eint0_nueva_pulsacion = 0;	
 	VICIntEnable = VICIntEnable | 0x00004000;
 };
 
+//devuelve 1 si ha habido una nueva pulsacion
 unsigned int eint0_read_nueva_pulsacion(void){
 	return eint0_nueva_pulsacion;
 };
 
+
+//inicia los valores de los registros necesarios
+//inicia los valos de las variables necesarias
 void eint0_init (void) {
 	eint0_nueva_pulsacion = 0;
 	EXTINT =  EXTINT | 1;        // clear interrupt flag

@@ -13,6 +13,7 @@ static volatile unsigned int timer0_int_periodo = 0;
 unsigned int retardo; //retardo de la alarma
 unsigned int periodo; //perido de la alarma ciclica
 
+//
 uint8_t alarmaActivada;
 uint8_t periodoActivado;
 
@@ -36,20 +37,24 @@ void temporizador0_iniciar (void) {
     VICIntEnable = VICIntEnable | 0x00000010; // Enable Timer0 Interrupt
 }
 
+//pone a 0 el contador 
 void temporizador0_empezar(void) {
   timer0_int_count = 0;
-
 }
 
+//devuelve el valor del contador
 unsigned int temporizador0_leer(void){
 	return timer0_int_count;
 };
 
+//para el contador t devuelve su valor
 unsigned int temporizador0_parar(void) {
   VICIntEnClr = VICIntEnClr | 0x00000010;
   return temporizador0_leer();
 }
 
+
+//programa un evento de timer para _retardo ms
 void temporizador_alarma(int _retardo){
   timer0_int_count_retardo = 0;
   retardo=_retardo;
@@ -57,13 +62,14 @@ void temporizador_alarma(int _retardo){
 }
 
 
-
+//programa una sucesion de eventos de timer cada _retardo ms
 void temporizador_alarma_periodica(int _retardo){
   timer0_int_periodo = 0;
   periodo = _retardo;
   periodoActivado= 1;
 }
 
+//desactiva la sucesion de eventos de timer programada
 void temporizador_desactivar_alarma(void){
   periodoActivado=0;
 }
@@ -73,13 +79,14 @@ void timer0_ISR (void) __irq {
     timer0_int_count++;
     timer0_int_count_retardo++;
     timer0_int_periodo++;
-
+    //si ha pasado un periodo genrea un evento y resetea el contador
     if(periodoActivado){
       if(timer0_int_periodo >= periodo){
         timer0_int_periodo = 0;
         cola_guardar_eventos(EV_TIMER0,0);
       }
     }
+    //si ha pasado el retardo genera un evento, desactiva la alarma y resetea el contador
     if(alarmaActivada){
       if(timer0_int_count_retardo >= retardo){
         timer0_int_count_retardo = 0;
