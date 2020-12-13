@@ -1,7 +1,5 @@
-
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 #include "timer0.h"
-#include "pulsacion.h"
 #include "cola.h"
 #include "Eventos.h"
 #include <stdint.h>
