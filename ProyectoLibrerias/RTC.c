@@ -20,6 +20,16 @@ void RTC_init(void){
 	// enable of the RTC
 	CCR=0x01;
 }
+
+
+//swi
 int RTC_read_time(void){
-	return CTIME0;;
+	return CTIME0;
+}
+
+int RTC_leer_segundos(void){
+	return RTC_read_time()&0x3F;
+}
+int RTC_leer_minutos(void){
+	return (RTC_read_time()&0x3F00)>> 8;
 }

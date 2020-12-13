@@ -27,6 +27,9 @@ void feed_watchdog (void) {				   /* Reload the watchdog timer       */
 // esta es la secuencia necesaria para que el watchdog se reinicialice. Si no se alimenta al WT antes de que termine la cuenta reseteará el sistema (si está habilitado para ello)
 // aunque se active el watchdog, este no hará nada hasta que no se le alimente por primera vez
 //Important! Interrupts must be disabled during the feed sequence. An abort condition will occur if an interrupt happens during the feed sequence
-  WDFEED = 0xAA;						   
-  WDFEED = 0x55;  
+  int aux = VICIntEnable;
+	VICIntEnClr = 0xffffffff;
+	WDFEED = 0xAA;						   
+  WDFEED = 0x55;
+  VICIntEnable = aux;
 }
