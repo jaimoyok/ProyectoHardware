@@ -1,0 +1,15 @@
+The Watchdog project is a simple program for the Philips 
+LPC2104/2105/2106 microcontroller devices.
+
+This program configures and starts the watchdog timer, 
+then keeps it reloaded for a short while.  It then stops
+reloading it to allow the timer to time out and reset 
+the microcontroller.
+
+To run this program...
+
+1. Build the project (Project Menu, Build Target)
+2. Start the debugger (Debug Menu, Start/Stop Debug Session)
+3. View the Watchdog Module (Peripheral Menu, Watchdog)
+4. Select Periodic Window Update (View, Periodic Window Update)
+5. Run the program (Debug Menu, Go)
