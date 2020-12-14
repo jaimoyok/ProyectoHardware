@@ -1,2 +1,2 @@
-void WT_init(void);
+void WT_init(int sec);
 void feed_watchdog (void);
