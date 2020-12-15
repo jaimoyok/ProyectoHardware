@@ -25,17 +25,21 @@ SWI_Handler
                 BICNE   R12, R12, #0xFF00      ; Extract SWI Number
                 LDREQ   R12, [LR,#-4]          ; ARM:   Load Word
                 BICEQ   R12, R12, #0xFF000000  ; Extract SWI Number
-
-; add code to enable/disable the global IRQ flag
-                CMP     R12,#0xFF              
-                BEQ     __decrease_var
-
-                LDR     R8, SWI_Count
+				
+				
+				
+                LDR     R8, SWI_Count0
                 CMP     R12, R8
-                BHS     SWI_Dead               ; Overflow
-                ADR     R8, SWI_Table
-                LDR     R12, [R8,R12,LSL #2]   ; Load SWI Function Address
-                MOV     LR, PC                 ; Return Address
+                BHS     tabla1               ; Overflow		
+                ADR     R8, SWI_Table0
+				B 		end1
+tabla1			LDR 	R8, SWI_Count1
+				RSB 	R12, R12, #0xFF
+				CMP		R12,R8
+				BHS 	SWI_Dead
+				ADR     R8, SWI_Table1
+end1 			LDR     R12, [R8,R12,LSL #2]   ; Load SWI Function Address
+				MOV     LR, PC                 ; Return Address
                 BX      R12                    ; Call SWI Function 
 
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
@@ -44,21 +48,34 @@ SWI_Handler
 
 SWI_Dead        B       SWI_Dead               ; None Existing SWI
 
-SWI_Cnt         EQU    (SWI_End-SWI_Table)/4
-SWI_Count       DCD     SWI_Cnt
+SWI_Cnt0        EQU    (SWI_End0-SWI_Table0)/4
+SWI_Count0       DCD     SWI_Cnt0
 
-                IMPORT  __SWI_0
-;               IMPORT  __SWI_1
-;               IMPORT  __SWI_2
-;               IMPORT  __SWI_3
-SWI_Table
+SWI_Cnt1         EQU    (SWI_End1-SWI_Table1)/4
+SWI_Count1       DCD     SWI_Cnt1
+	
+               IMPORT  __SWI_0
+ ;              IMPORT  __SWI_1
+ ;             IMPORT  __SWI_2
+ ;             IMPORT  __SWI_3
+				IMPORT __SWI_FF
+				IMPORT __SWI_FE
+;				IMPORT __SWI_FD
+;				IMPORT __SWI_FC
+SWI_Table0
                 DCD     __SWI_0                ; SWI 0 Function Entry
-;               DCD     __SWI_1                ; SWI 1 Function Entry
+;				DCD     __SWI_1                ; SWI 1 Function Entry
 ;               DCD     __SWI_2                ; SWI 2 Function Entry
 ;               DCD     __SWI_3                ; SWI 3 Function Entry
+SWI_End0
 
+SWI_Table1
+				DCD     __SWI_FF
+				DCD     __SWI_FE
+;				DCD     __SWI_FD
+;				DCD     __SWI_FC
 ;               ...
-SWI_End
+SWI_End1
 
                 EXTERN shared_var [DATA,SIZE=4]
 

@@ -18,7 +18,6 @@ static volatile int usos_timer =
 static volatile int fila;    // fila seleccionada
 static volatile int columna; // columna seleccionada
 static volatile int cuenta_atras = PERIODOS; // contador confirmacion
-int cnt;      // identificador del contador preciso
 int tiempoIA; // guarda los milisegundos que tarda la IA en hacer un movimiento
 
 typedef enum { no_pulsado = 0, pulsado = 1 } estado_boton_t;
@@ -45,7 +44,6 @@ void iniciarOIreversi() {
   // iniciar juego
   reversi8_iniciar();
   // iniciar contador para la IA
-  cnt = iniciar_contador();
 }
 
 void leer_movimiento() {
@@ -58,9 +56,9 @@ void aceptar_movimiento() {
   if (reversi8_comprobar_movimiento(fila, columna)) {
     // si el movimiento es valido se procesa y la ia juega
     reversi8_mover_jugador(fila, columna);
-    resetear_contador(cnt);
+    int aux = temporizador1_leer(); 
     reversi8_mover_ia();
-    tiempoIA = contador(cnt);
+    tiempoIA = aux - temporizador1_leer();
   } else {
     // si movimiento no valido se activa bit para indicarlo
     GPIO_escribir(29, 1, 1);
@@ -198,7 +196,6 @@ void gestionar_eventos() {
       switch (state) {
       case INICIO: {
         // El jugador ha pasado de turno.
-        resetear_contador(cnt);
         if (!reversi8_mover_ia()) {
           // Si la IA tambien pasa finaliza la partida.
           state = FIN;
