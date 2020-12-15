@@ -49,3 +49,7 @@ void timer1_ISR(void) __irq {
   T1IR = 1;        // Clear interrupt flag
   VICVectAddr = 0; // Acknowledge Interrupt
 }
+
+uint32_t __SWI_0 (void) {
+	return temporizador1_leer();
+}

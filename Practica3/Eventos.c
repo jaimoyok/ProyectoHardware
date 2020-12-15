@@ -56,9 +56,9 @@ void aceptar_movimiento() {
   if (reversi8_comprobar_movimiento(fila, columna)) {
     // si el movimiento es valido se procesa y la ia juega
     reversi8_mover_jugador(fila, columna);
-    int aux = temporizador1_leer(); 
+    int aux = clock_gettime(); 
     reversi8_mover_ia();
-    tiempoIA = aux - temporizador1_leer();
+    tiempoIA = aux - clock_gettime();
   } else {
     // si movimiento no valido se activa bit para indicarlo
     GPIO_escribir(29, 1, 1);

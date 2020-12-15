@@ -8,5 +8,6 @@ unsigned int temporizador1_parar(void);
 int iniciar_contador(void);
 void resetear_contador(int numContador);
 int contador(int numContador);
+uint32_t __swi(0) clock_gettime();
 
 #endif
