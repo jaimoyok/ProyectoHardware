@@ -9,6 +9,8 @@
 ;/*****************************************************************************/
 
 T_Bit           EQU     0x20
+I_Bit           EQU     0x80            ; when I bit is set, IRQ is disabled
+F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 
                 PRESERVE8                      ; 8-Byte aligned Stack
                 AREA    SWI_Area, CODE, READONLY
@@ -28,7 +30,13 @@ SWI_Handler
 
 ; add code to enable/disable the global IRQ flag
                 CMP     R12,#0xFF              
-                BEQ     __decrease_var
+                BEQ     __enable_isr
+                CMP     R12,#0xFE              
+                BEQ     __disable_isr
+                CMP     R12,#0xFD              
+                BEQ     __enable_isr_fiq
+                CMP     R12,#0xFC              
+                BEQ     __disable_isr_fiq
 
                 LDR     R8, SWI_Count
                 CMP     R12, R8
@@ -62,15 +70,31 @@ SWI_End
 
                 EXTERN shared_var [DATA,SIZE=4]
 
-__decrease_var
-                LDR R8, =shared_var
-		LDR R12, [r8]
-                SUB R12, R12, #1
-                STR R12, [R8]
+ __enable_isr
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                BIC     R12, R12, #I_Bit       ; Disable IRQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
+ __disable_isr
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                ORR     R12, R12, #I_Bit       ; Enable IRQ
+                MSR     SPSR_cxsf, R12         ; Set SPSR
+                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+
+ __enable_isr_fiq
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                BIC     R12, R12, #I_Bit       ; Enable IRQ
+                BIC     R12, R12, #F_Bit       ; Enable FIQ
+                MSR     SPSR_cxsf, R12         ; Set SPSR
+                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+
+ __disable_isr_fiq
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                ORR     R12, R12, #I_Bit       ; Disable IRQ
+                ORR     R12, R12, #F_Bit       ; Disable FIQ
+                MSR     SPSR_cxsf, R12         ; Set SPSR
+                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
                 END
 
