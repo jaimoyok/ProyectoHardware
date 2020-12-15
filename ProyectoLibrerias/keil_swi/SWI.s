@@ -54,39 +54,24 @@ SWI_Count0       DCD     SWI_Cnt0
 SWI_Cnt1         EQU    (SWI_End1-SWI_Table1)/4
 SWI_Count1       DCD     SWI_Cnt1
 	
-               IMPORT  __SWI_0
- ;              IMPORT  __SWI_1
- ;             IMPORT  __SWI_2
- ;             IMPORT  __SWI_3
+                IMPORT  __SWI_0
 				IMPORT __SWI_FF
 				IMPORT __SWI_FE
-;				IMPORT __SWI_FD
-;				IMPORT __SWI_FC
+				IMPORT __SWI_FD
+				IMPORT __SWI_FC
 SWI_Table0
                 DCD     __SWI_0                ; SWI 0 Function Entry
-;				DCD     __SWI_1                ; SWI 1 Function Entry
-;               DCD     __SWI_2                ; SWI 2 Function Entry
-;               DCD     __SWI_3                ; SWI 3 Function Entry
 SWI_End0
 
 SWI_Table1
 				DCD     __SWI_FF
 				DCD     __SWI_FE
-;				DCD     __SWI_FD
-;				DCD     __SWI_FC
-;               ...
+				DCD     __SWI_FD
+				DCD     __SWI_FC
+
 SWI_End1
 
-                EXTERN shared_var [DATA,SIZE=4]
-
-__decrease_var
-                LDR R8, =shared_var
-		LDR R12, [r8]
-                SUB R12, R12, #1
-                STR R12, [R8]
-                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
-                MSR     SPSR_cxsf, R12         ; Set SPSR
-                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+            
 
 
                 END

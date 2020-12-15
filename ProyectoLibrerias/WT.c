@@ -18,7 +18,7 @@ void WT_init(int sec){
 	// Time out: Pclk*WDTC*4
 	// valor m�nimo WTC= 256; valor m�ximo 2^32 (si escribes algo menos que FF, se escribe FF)
 
-  WDTC  = 15000000 * 4 * sec;						   // Set watchdog time out value
+  WDTC  = 60000000  * sec; 				//60Mhz -> 60M tics por segundo	 // Set watchdog time out value
   WDMOD = 0x03;                            /* Enable watchdog timer (bit 0) and reset (bit 1).  */   
 	// se puede trabajar en dos modos: reset dando el valor 11 a los dos bits menos significativos; Int: dando 10 (en ese caso el WT genera una interrupci�n
 	// Una vez se da un valor a estos bits �ya no se pueden cambiar a no ser que haya un reset externo, o la cuenta del WT acabe
@@ -31,6 +31,6 @@ void feed_watchdog (void) {				   /* Reload the watchdog timer       */
   int aux = VICIntEnable;
 	VICIntEnClr = 0xffffffff;	//Se desabilitan las interupciones
 	WDFEED = 0xAA;						   
-  WDFEED = 0x55;
-  VICIntEnable = aux;	//Se habilitan las interrupciones
+ 	WDFEED = 0x55;
+	VICIntEnable = aux;	//Se habilitan las interrupciones
 }
