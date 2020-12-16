@@ -10,12 +10,12 @@ void WT_init(int sec){
 	// valor m�nimo WTC= 256; valor m�ximo 2^32 (si escribes algo menos que FF, se escribe FF)
 	WDTC  = 60000000  * sec; 					/*60Mhz -> 60M tics por segundo*/	 // Set watchdog time out value
 	WDMOD = 0x03;                            	/* Enable watchdog timer (bit 0) and reset (bit 1).  */  
-	feed_watchdog();			 				/*Se alimenta para comenzar la cuenta*/
+	//feed_watchdog();			 				/*Se alimenta para comenzar la cuenta*/
 }
 
-void feed_watchdog (void) {				   /* Reload the watchdog timer       */
-  	disable_isr_fiq();	//Se desabilitan las interupciones
+void feed_watchdog() {				   /* Reload the watchdog timer       */
+  disable_isr_fiq();	//Se desabilitan las interupciones
 	WDFEED = 0xAA;						   
  	WDFEED = 0x55;
-	enable_ise_fiq();	//Se habilitan las interrupciones
+	enable_isr_fiq();	//Se habilitan las interrupciones
 }

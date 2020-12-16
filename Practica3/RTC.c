@@ -19,6 +19,10 @@ void RTC_init(void){
 	PREFRAC = 0x700;
 	// enable of the RTC
 	CCR=0x01;
+	
+	//Reset del tiempo
+	SEC = 0;
+	MIN = 0;
 }
 
 

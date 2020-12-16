@@ -70,26 +70,26 @@ SWI_End
 
                 EXTERN shared_var [DATA,SIZE=4]
 
- __enable_isr
+__enable_isr
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 BIC     R12, R12, #I_Bit       ; Disable IRQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
- __disable_isr
+__disable_isr
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 ORR     R12, R12, #I_Bit       ; Enable IRQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
- __enable_isr_fiq
+__enable_isr_fiq
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 BIC     R12, R12, #I_Bit       ; Enable IRQ
                 BIC     R12, R12, #F_Bit       ; Enable FIQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
- __disable_isr_fiq
+__disable_isr_fiq
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
                 ORR     R12, R12, #I_Bit       ; Disable IRQ
                 ORR     R12, R12, #F_Bit       ; Disable FIQ
