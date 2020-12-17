@@ -1,5 +1,5 @@
 #include <LPC210x.H>                       /* LPC210x definitions */
-#include "Serial_port.h" 
+#include "UART0.h" 
 #include "SWI.h"
 
 void WT_init(int sec){
