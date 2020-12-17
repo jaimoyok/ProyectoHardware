@@ -3,15 +3,20 @@
 
 #define CR     0x0D
 
-//Cursor para indicar la posicion en el buffer
 static int offset = 0;
-static volatile char read_buffer[READ_BUFFER_SIZE];
+static volatile char read_buffer[10/*READ_BUFFER_SIZE*/];
 
 void uart0_isr(void) __irq {
-	read_buffer[offset] = U0RBR;					// Se guarda el dato en el buffer
-	offset = (offset + 1) % READ_BUFFER_SIZE;
-	//generarEvento(datoLeido)
-	
+	int type = (U0IIR >> 1) & 0x7; 				// Bits [3:1] -> Interrupt Identification
+	if (type == 0x1)											// THRE
+		;
+	else if (type == 0x2) {								// RDA
+		read_buffer[offset] = U0RBR;				// Se guarda el dato en el buffer
+		offset = (offset + 1) % 10/*READ_BUFFER_SIZE*/;
+		//generarEvento(datoLeido)
+		U0THR = read_buffer[offset - 1];		//Escribe el dato (Genera interrupcion THRE)
+	}
+			
 	VICVectAddr = 0;                      /* Acknowledge Interrupt						 */
 }
 
@@ -44,7 +49,7 @@ int sendchar (int ch)  {                 /* Write character to Serial Port    */
     while (!(U0LSR & 0x20));
     U0THR = CR;                          /* output CR */
   }
-  while (!(U1LSR & 0x20));
+  while (!(U0LSR & 0x20));
   return (U0THR = ch);
 }
 

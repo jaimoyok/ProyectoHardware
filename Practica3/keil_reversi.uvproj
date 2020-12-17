@@ -171,11 +171,11 @@
             <UseTargetDll>1</UseTargetDll>
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
-            <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
+            <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
             <DriverSelection>4096</DriverSelection>
           </Flash1>
-          <bUseTDR>0</bUseTDR>
+          <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2ARM.DLL</Flash2>
           <Flash3>"LPC210x_ISP.EXE" ("#H" ^X $D COM1: 9600 1)</Flash3>
           <Flash4></Flash4>
@@ -442,11 +442,6 @@
           <GroupName>Source Code</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
-            </File>
-            <File>
               <FileName>Power_management.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Power_management.c</FilePath>
@@ -497,6 +492,11 @@
               <FilePath>.\boton_eint1.h</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
+            </File>
+            <File>
               <FileName>timer0.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer0.c</FilePath>
@@ -530,6 +530,61 @@
               <FileName>reversi8.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\reversi8.h</FilePath>
+            </File>
+            <File>
+              <FileName>WT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\WT.c</FilePath>
+            </File>
+            <File>
+              <FileName>cola.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\cola.h</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\GPIO.h</FilePath>
+            </File>
+            <File>
+              <FileName>SWI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWI.h</FilePath>
+            </File>
+            <File>
+              <FileName>WT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\WT.h</FilePath>
+            </File>
+            <File>
+              <FileName>SWI.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\SWI.s</FilePath>
+            </File>
+            <File>
+              <FileName>RTC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\RTC.c</FilePath>
+            </File>
+            <File>
+              <FileName>RTC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RTC.h</FilePath>
+            </File>
+            <File>
+              <FileName>UART0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UART0.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UART0.h</FilePath>
+            </File>
+            <File>
+              <FileName>test_uart0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\test_uart0.c</FilePath>
             </File>
           </Files>
         </Group>
