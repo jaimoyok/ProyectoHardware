@@ -4,8 +4,9 @@
 
 #define CR     0x0D
 
-static int cursor = 0;
-static volatile char read_buffer[10/*READ_BUFFER_SIZE*/];
+static volatile char read_buffer[READ_BUFFER_SIZE];
+static int indice_escribir = 0;
+static volatile char write_buffer[WRITE_BUFFER_SIZE];
 
 void uart0_isr(void) __irq {
 	char leido;
@@ -13,14 +14,18 @@ void uart0_isr(void) __irq {
 	int tipo = (U0IIR >> 1) & 0x7; 				// Bits [3:1] -> Interrupt Identification
 	
 	if (tipo == 0x1)											// THRE
-		;
+		if (write_buffer[indice_escribir] == '\0') {	//Esta vacio el buffer de escritura
+			indice_escribir = 0;
+			write_buffer[indice_escribir] = '\0';
+		}
+		else {	//Hay datos pendientes de escribir
+			U0THR = write_buffer[indice_escribir];
+			indice_escribir++;
+		}
 	else if (tipo == 0x2) {								// RDA
 		leido = U0RBR;
-		read_buffer[cursor] = leido;				// Se guarda el dato en el buffer
 		U0THR = leido;		//Escribe el dato (Genera interrupcion THRE)
-		
-		cola_guardar_eventos(EV_UART0, leido);
-		cursor = (cursor + 1) % 10/*READ_BUFFER_SIZE*/;
+		//cola_guardar_eventos(EV_UART0, leido);
 	}
 			
 	VICVectAddr = 0;                      /* Acknowledge Interrupt						 */
@@ -45,24 +50,19 @@ void uart0_init (void)  {       				/* Initialize Serial Interface       */
 	VICVectCntl4 = 0x20 | 6;
   VICIntEnable = VICIntEnable | 0x40; // Enable UART0 Interrupt
 	
+	write_buffer[indice_escribir] = '\0';
+	
 }
 
 
-/* implementation of putchar (also used by printf function to output data)    */
-int sendchar (int ch)  {                 /* Write character to Serial Port    */
-
-  if (ch == '\n')  {
-    while (!(U0LSR & 0x20));
-    U0THR = CR;                          /* output CR */
-  }
-  while (!(U0LSR & 0x20));
-  return (U0THR = ch);
-}
-
-
-int getchar (void)  {                     /* Read character from Serial Port   */
-
-  while (!(U0LSR & 0x01));
-
-  return (U0RBR);
+/* Escribe una cadena en pantalla    */
+void print (char* cadena)  {
+	int i = 0;
+	int j = indice_escribir;
+	while (cadena[i] != '\0') {
+		write_buffer[j] = cadena [i];
+		j++;
+		i++;
+	}
+	write_buffer[j] = '\0';
 }

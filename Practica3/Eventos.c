@@ -48,11 +48,6 @@ void iniciarOIreversi() {
   // iniciar contador para la IA
 }
 
-void leer_movimiento() {
-  fila = GPIO_leer(0, 3);
-  columna = GPIO_leer(8, 3);
-}
-
 void aceptar_movimiento() {
   GPIO_escribir(29, 1, 0); // Se limpia la casilla de movimiento incorrecto.
   if (reversi8_comprobar_movimiento(fila, columna)) {
@@ -168,7 +163,8 @@ void gestionar_eventos() {
 			case EV_COMANDO:
 				comando[0] = (data >> 16) & 0xFF;
 				comando[1] = (data >> 8) & 0xFF;
-				comando[2] = data & 0xFF; 
+				comando[2] = data & 0xFF;
+					
 				break;
     case EV_BOTON0: {
       gestionar_boton0(1);

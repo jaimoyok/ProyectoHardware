@@ -577,11 +577,6 @@
               <FilePath>.\UART0.c</FilePath>
             </File>
             <File>
-              <FileName>UART0.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\UART0.h</FilePath>
-            </File>
-            <File>
               <FileName>comandos.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\comandos.c</FilePath>
@@ -590,6 +585,16 @@
               <FileName>comandos.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\comandos.h</FilePath>
+            </File>
+            <File>
+              <FileName>test_uart0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\test\test_uart0.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\UART0.h</FilePath>
             </File>
           </Files>
         </Group>
