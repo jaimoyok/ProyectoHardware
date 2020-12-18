@@ -202,6 +202,28 @@ int8_t ficha_valida(int8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_val
 //          Se usa para saber cuantas fichas habr�a que voltear
 extern int patron_volteo_arm_arm(int8_t tablero[][8], int *longitud, int8_t f, int8_t c, int8_t SF, int8_t SC, char color);
 
+char to_ficha(int ficha){
+    if(ficha==1)return 'B';
+    if(ficha==2)return 'N';
+    if(ficha==3)returm '*';
+    if(ficha==0)return '-';
+    while(1);
+}
+char* mostrarTablero(int8_t tablero[][DIM]){
+    char * cadena;
+    int k = 0;
+    for(int i = 0; i<DIM; i++){
+        for (int j = 0; j<DIM; j++){
+            cadena[k]= to_ficha(tablero[i][j]);
+            k++
+        }
+        cadena[k]= '\n';
+        k++;
+    }
+    return cadena
+
+}
+
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
 {
 	return patron_volteo_arm_arm(tablero,longitud,FA,CA,SF,SC,color);

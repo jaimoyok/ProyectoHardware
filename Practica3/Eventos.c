@@ -18,6 +18,7 @@ static volatile int usos_timer =
     0;                       // numero de perifericos que necesitan el relog
 static volatile int fila;    // fila seleccionada
 static volatile int columna; // columna seleccionada
+static volatile int ready;
 static volatile int cuenta_atras = PERIODOS; // contador confirmacion
 int tiempoIA; // guarda los milisegundos que tarda la IA en hacer un movimiento
 
@@ -33,11 +34,6 @@ void iniciarOIreversi() {
   GPIO_iniciar();
   GPIO_marcar_salida(0, 32);
   GPIO_escribir(24, 8, 0);
-  GPIO_escribir(0, 3, 0);
-  GPIO_escribir(8, 3, 0);
-  // Fila y columna
-  GPIO_marcar_entrada(0, 3);
-  GPIO_marcar_entrada(8, 3);
   // iniciar timers
   temporizador0_iniciar();
   temporizador1_iniciar();
@@ -154,6 +150,7 @@ void gestionar_eventos() {
         PM_idle();
       }
     }
+
     // leemos el siguient evento
     siguienteEvento(&data, &evento, &time);
     switch (evento) {
@@ -161,23 +158,51 @@ void gestionar_eventos() {
 				buscar_comando(data);
 				break;
 			case EV_COMANDO:
-				comando[0] = (data >> 16) & 0xFF;
-				comando[1] = (data >> 8) & 0xFF;
-				comando[2] = data & 0xFF;
+        switch (data)
+        {
+        case PASAR:
+          if(state = INICIO){
+            if (!reversi8_mover_ia()) {
+          // Si la IA tambien pasa finaliza la partida.
+            state = FIN;
+          //tiempoIA = contador(cnt);
+          }
+          //TODO:cambiar
+          else print("que dise loko");
+        }
+        break;
+          }
+          break;
+        case ACABAR_PARTIDA:
+          state = FIN
+          print("Pulse un boton o escriba <!NEW> para empezar otra partida\n")
+          break;
+        case NUEVA_PARTIDA:
+          state = INICIO;
+          reversi8_iniciar();
+          break;
+        case COMANDO_FALLIDO:
+          //TODO:cambiar
+          print("que dise loko");
+          break;
+        default:
+          if(state== INICIO){
+            state = ACEPTAR;
+            usos_timer++;
+            cuenta_atras = PERIODOS;
+            fila = (data >> 8) & 0xFF;
+			      columna = data & 0xFF;
+            break;
+          }
+          else print("Ya has selecionado movimiento, cancelo para introducir otra jugada\n")
+         
+        }
+			
 					
 				break;
     case EV_BOTON0: {
       gestionar_boton0(1);
       switch (state) {
-      case INICIO: {
-        // Se ha realizado un movimiento.
-        // A espera de confirmación temporal (3s) o por botón.
-        state = ACEPTAR;
-        usos_timer++;
-        leer_movimiento();
-        cuenta_atras = PERIODOS;
-        break;
-      }
       case ACEPTAR: {
         // El usuario ha confirmado su movimiento.
         // Se coloca la ficha y turno de la IA.
