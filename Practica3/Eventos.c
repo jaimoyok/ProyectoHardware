@@ -8,6 +8,7 @@
 #include "stdint.h"
 #include "timer0.h"
 #include "timer1.h"
+#include "comandos.h"
 
 enum {
   RETARDO = 250, // periodo de alarma
@@ -24,7 +25,8 @@ typedef enum { no_pulsado = 0, pulsado = 1 } estado_boton_t;
 
 typedef enum { INICIO, ACEPTAR, MOVER, FIN } Estado;
 
-void iniciarOIreversi() {
+void iniciarOIreversi() {	
+	
   // activar perifericos
   eint0_init();
   eint1_init();
@@ -141,6 +143,7 @@ void gestionar_eventos() {
   uint8_t evento = 0;
   uint32_t data = 0;
   uint32_t time = 0;
+	char comando[DIM_COMANDO];
   while (1) {
     // comprobamos si hay que encender o aparar la alarma??
     controlar_alarmas();
@@ -159,6 +162,14 @@ void gestionar_eventos() {
     // leemos el siguient evento
     siguienteEvento(&data, &evento, &time);
     switch (evento) {
+			case EV_UART0:
+				buscar_comando(data);
+				break;
+			case EV_COMANDO:
+				comando[0] = (data >> 16) & 0xFF;
+				comando[1] = (data >> 8) & 0xFF;
+				comando[2] = data & 0xFF; 
+				break;
     case EV_BOTON0: {
       gestionar_boton0(1);
       switch (state) {

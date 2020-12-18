@@ -442,11 +442,6 @@
           <GroupName>Source Code</GroupName>
           <Files>
             <File>
-              <FileName>Power_management.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Power_management.c</FilePath>
-            </File>
-            <File>
               <FileName>Power_management.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Power_management.h</FilePath>
@@ -490,6 +485,11 @@
               <FileName>boton_eint1.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\boton_eint1.h</FilePath>
+            </File>
+            <File>
+              <FileName>Power_management.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Power_management.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -582,9 +582,14 @@
               <FilePath>.\UART0.h</FilePath>
             </File>
             <File>
-              <FileName>test_uart0.c</FileName>
+              <FileName>comandos.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\test_uart0.c</FilePath>
+              <FilePath>.\comandos.c</FilePath>
+            </File>
+            <File>
+              <FileName>comandos.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\comandos.h</FilePath>
             </File>
           </Files>
         </Group>

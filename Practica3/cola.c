@@ -72,8 +72,7 @@ uint8_t avanzar() {
 
 uint8_t cola_guardar_eventos(uint8_t ID_evento, uint32_t auxData) {
   elem_cola e;
-  e.timestamp = clock_gettime();
-  // e.timestamp = 0;
+  //e.timestamp = clock_gettime(); //TODO
   e.id_aux = ID_evento << 24 | (auxData & 0x00FFFFFF);
   if (insertarEvento(e))
     return 1;

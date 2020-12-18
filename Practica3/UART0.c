@@ -1,20 +1,26 @@
 #include <LPC210x.H>                     /* LPC21xx definitions               */
 #include "UART0.h"
+#include "Eventos.h"
 
 #define CR     0x0D
 
-static int offset = 0;
+static int cursor = 0;
 static volatile char read_buffer[10/*READ_BUFFER_SIZE*/];
 
 void uart0_isr(void) __irq {
-	int type = (U0IIR >> 1) & 0x7; 				// Bits [3:1] -> Interrupt Identification
-	if (type == 0x1)											// THRE
+	char leido;
+	
+	int tipo = (U0IIR >> 1) & 0x7; 				// Bits [3:1] -> Interrupt Identification
+	
+	if (tipo == 0x1)											// THRE
 		;
-	else if (type == 0x2) {								// RDA
-		read_buffer[offset] = U0RBR;				// Se guarda el dato en el buffer
-		offset = (offset + 1) % 10/*READ_BUFFER_SIZE*/;
-		//generarEvento(datoLeido)
-		U0THR = read_buffer[offset - 1];		//Escribe el dato (Genera interrupcion THRE)
+	else if (tipo == 0x2) {								// RDA
+		leido = U0RBR;
+		read_buffer[cursor] = leido;				// Se guarda el dato en el buffer
+		U0THR = leido;		//Escribe el dato (Genera interrupcion THRE)
+		
+		cola_guardar_eventos(EV_UART0, leido);
+		cursor = (cursor + 1) % 10/*READ_BUFFER_SIZE*/;
 	}
 			
 	VICVectAddr = 0;                      /* Acknowledge Interrupt						 */
