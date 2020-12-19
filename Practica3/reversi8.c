@@ -224,6 +224,21 @@ char* mostrarTablero(int8_t tablero[][DIM]){
 
 }
 
+void mostrarMenu() {
+    print("*************************************************");
+    print("*****               REVERSI 8               *****");
+    print("*************************************************");
+    print("Lista de comandos:");
+    print("\t- #PAS -> Pasar turno");
+    print("\t- #RST -> Finalizar partida");
+    print("\t- #NEW -> Iniciar nueva partida");
+    print("\t- #FCS -> Colocar ficha en la posicion [F,C]");
+    print("*************************************************");
+    print("Lista de Botones:");
+    print("\t- Boton 0: -> Confirmar movimiento");
+    print("\t- Boton 1: -> Cancelar movimiento");
+}
+
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
 {
 	return patron_volteo_arm_arm(tablero,longitud,FA,CA,SF,SC,color);
