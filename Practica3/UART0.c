@@ -65,4 +65,5 @@ void print (char* cadena)  {
 		i++;
 	}
 	write_buffer[j] = '\0';
+	U0THR = '\n';
 }

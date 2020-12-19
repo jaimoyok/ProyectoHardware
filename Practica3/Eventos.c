@@ -46,16 +46,16 @@ void iniciarOIreversi() {
 
 void aceptar_movimiento() {
   GPIO_escribir(29, 1, 0); // Se limpia la casilla de movimiento incorrecto.
-  if (reversi8_comprobar_movimiento(fila, columna)) {
+  if (reversi8_comprobar_movimiento()) {
     // si el movimiento es valido se procesa y la ia juega
-    reversi8_mover_jugador(fila, columna);
+    reversi8_mover_jugador();
     int aux = clock_gettime(); 
     reversi8_mover_ia();
     tiempoIA = aux - clock_gettime();
   } else {
     // si movimiento no valido se activa bit para indicarlo
+    reversi8_cancelar_movimiento();
     GPIO_escribir(29, 1, 1);
-    limpiar_casilla(fila, columna); // Se asegura que quede a 0
   }
 }
 
@@ -140,15 +140,8 @@ void gestionar_eventos() {
     controlar_alarmas();
     // esperamos a que exista un evento que procesar
     while (!nuevoEvento()) {
-      // si estamos en el estado inicio dormimos el procesador
-      if (state == INICIO) {
-        //PM_power_down(); //TODO:cambiar a power_down
-				PM_idle();
-      }
-      // si no necesitamos recibir los eventos del timer
-      else {
+      // si no tenemos que procesar dormimos el procesador
         PM_idle();
-      }
     }
 
     // leemos el siguient evento
@@ -165,21 +158,22 @@ void gestionar_eventos() {
             if (!reversi8_mover_ia()) {
           // Si la IA tambien pasa finaliza la partida.
             state = FIN;
-          //tiempoIA = contador(cnt);
+            //tiempoIA = contador(cnt);
+             print(mostrarResultado());
+            }
+            else print(mostrarTablero());
           }
           //TODO:cambiar
           else print("que dise loko");
-        }
-        break;
-          }
           break;
         case ACABAR_PARTIDA:
-          state = FIN
-          print("Pulse un boton o escriba <!NEW> para empezar otra partida\n")
+          state = FIN;
+          print("Pulse un boton o escriba <!NEW> para empezar otra partida\n");
           break;
         case NUEVA_PARTIDA:
           state = INICIO;
           reversi8_iniciar();
+          print(mostrarTablero());
           break;
         case COMANDO_FALLIDO:
           //TODO:cambiar
@@ -187,15 +181,17 @@ void gestionar_eventos() {
           break;
         default:
           if(state== INICIO){
-            state = ACEPTAR;
-            usos_timer++;
-            cuenta_atras = PERIODOS;
             fila = (data >> 8) & 0xFF;
 			      columna = data & 0xFF;
             break;
+            if(reversi8_seleccionar_movimiento(fila,columna)){
+              state = ACEPTAR;
+              usos_timer++;
+              cuenta_atras = PERIODOS;
+            }
+            else print("Casilla ocupada\n");
           }
-          else print("Ya has selecionado movimiento, cancelo para introducir otra jugada\n")
-         
+          else print("Ya has selecionado movimiento, cancelo para introducir otra jugada\n"); 
         }
 			
 					
@@ -214,6 +210,7 @@ void gestionar_eventos() {
       case FIN: {
         // Se ha terminado la partida y comienza una nueva.
         reversi8_iniciar();
+        print(mostrarTablero());
         state = INICIO;
         break;
       }
@@ -232,15 +229,17 @@ void gestionar_eventos() {
           // Si la IA tambien pasa finaliza la partida.
           state = FIN;
           //tiempoIA = contador(cnt);
+          print(mostrarResultado()) 
         }
+        else print(mostrarTablero());
         break;
       }
       case ACEPTAR: {
         // Se cancela el movimiento realizado.
         usos_timer--;
-        limpiar_casilla(
-            fila, columna); // Se asegura de que se no se modifica la casilla
+        reversi8_cancelar_movimiento();
         state = INICIO;
+        print(mostrarTablero());
         break;
       }
       case FIN: {
@@ -261,7 +260,6 @@ void gestionar_eventos() {
       gestionar_led();
       switch (state) {
       case ACEPTAR: {
-        parpadea(fila, columna);
         cuenta_atras--;
         if (cuenta_atras == 0) {
           aceptar_movimiento();

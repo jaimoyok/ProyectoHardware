@@ -20,7 +20,8 @@ enum {
 enum {
 	CASILLA_VACIA = 0,
 	FICHA_BLANCA = 1,
-	FICHA_NEGRA = 2
+	FICHA_NEGRA = 2,
+    MOVIMIENTO = 3,
 };
 
 // candidatas: indica las posiciones a explorar
@@ -76,9 +77,8 @@ static int8_t __attribute__ ((aligned (8))) tablero[DIM][DIM] = {
      // VARIABLES PARA INTERACCIONAR CON LA ENTRADA SALIDA
      // Pregunta: �hay que hacer algo con ellas para que esto funcione bien?
      // (por ejemplo a�adir alguna palabra clave para garantizar que la sincronizaci�n a trav�s de esa variable funcione)
-volatile static int8_t fila=0,
-	    columna=0,
-	    ready = 0;
+volatile static int8_t fila_seleccionada=0,
+	        columna_seleccionada=0;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,10 +203,10 @@ int8_t ficha_valida(int8_t tablero[][DIM], int8_t f, int8_t c, int *posicion_val
 extern int patron_volteo_arm_arm(int8_t tablero[][8], int *longitud, int8_t f, int8_t c, int8_t SF, int8_t SC, char color);
 
 char to_ficha(int ficha){
-    if(ficha==1)return 'B';
-    if(ficha==2)return 'N';
-    if(ficha==3)returm '*';
-    if(ficha==0)return '-';
+    if(ficha==FICHA_BLANCA)return 'B';
+    if(ficha==FICHA_NEGRA)return 'N';
+    if(ficha==MOVIMIENTO)return '*';
+    if(ficha==CASILLA_VACIA)return '-';
     while(1);
 }
 char* mostrarTablero(int8_t tablero[][DIM]){
@@ -215,13 +215,12 @@ char* mostrarTablero(int8_t tablero[][DIM]){
     for(int i = 0; i<DIM; i++){
         for (int j = 0; j<DIM; j++){
             cadena[k]= to_ficha(tablero[i][j]);
-            k++
+            k++;
         }
         cadena[k]= '\n';
         k++;
     }
-    return cadena
-
+    return cadena;
 }
 
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
@@ -246,7 +245,9 @@ void voltear(int8_t tablero[][DIM], int8_t FA, int8_t CA, int8_t SF, int8_t SC, 
     }
 }
 
-int reversi8_comprobar_movimiento(int8_t fila, int8_t columna) {
+int reversi8_comprobar_movimiento() {
+    int fila = fila_seleccionada;
+    int columna =columna_seleccionada;
 		int flip = 0, SF, SC;
 		int i;
     for (i = 0; i < DIM; i++) {
@@ -411,10 +412,7 @@ void actualizar_candidatas(int8_t candidatas[][DIM], int8_t f, int8_t c)
         candidatas[f][c+1] = SI;
 }
 
-void parpadea(int fila,int  columna){
-    if(tablero[fila][columna] == 0)tablero[fila][columna] = 2;
-    else tablero[fila][columna] = 0;
-}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -445,11 +443,24 @@ void reversi8_iniciar() {
     init_table(tablero, candidatas);
 }
 
-void reversi8_mover_jugador(int fila, int columna) {
-    tablero[fila][columna] = FICHA_NEGRA;
-    actualizar_tablero(tablero, fila, columna, FICHA_NEGRA);
-    actualizar_candidatas(candidatas, fila, columna);
+void reversi8_mover_jugador() {
+    tablero[fila_seleccionada][columna_seleccionada] = FICHA_NEGRA;
+    actualizar_tablero(tablero, fila_seleccionada, columna_seleccionada, FICHA_NEGRA);
+    actualizar_candidatas(candidatas, fila_seleccionada, columna_seleccionada);
 }      
+int selecionar_movimiento(int fila, int columna){
+    if(tablero[fila][columna] != CASILLA_VACIA ) return 0;
+    tablero[fila][columna] = MOVIMIENTO;
+    fila_seleccionada= fila;
+    columna_seleccionada = columna;
+    return 1;
+}
+
+void cancelar_movimiento(){
+    if(tablero[fila_seleccionada][columna_seleccionada] == MOVIMIENTO)
+        tablero[fila_seleccionada][columna_seleccionada] = CASILLA_VACIA;
+}
+
 
 int reversi8_mover_ia(){
     int8_t f,c;
@@ -465,8 +476,4 @@ int reversi8_mover_ia(){
     }
     return 1;
    
-}
-
-void limpiar_casilla(int fila, int columna) {
-    tablero[fila][columna] = 0;
 }
