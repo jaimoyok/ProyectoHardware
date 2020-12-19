@@ -4,6 +4,7 @@
 #include "Power_management.h"
 #include "SWI.h"
 
+
 static volatile char read_buffer[READ_BUFFER_SIZE];
 
 static int indice_escribir = 0;
@@ -11,6 +12,7 @@ static volatile char write_buffer[WRITE_BUFFER_SIZE];
 
 void uart0_isr(void) __irq {
 	char leido;
+	VICVectAddr = 0;                      /* Acknowledge Interrupt						 */
 	
 	int tipo = (U0IIR >> 1) & 0x7; 				// Bits [3:1] -> Interrupt Identification
 	
@@ -26,10 +28,10 @@ void uart0_isr(void) __irq {
 	else if (tipo == 0x2) {								// RDA
 		leido = U0RBR;
 		U0THR = leido;		//Escribe el dato (Genera interrupcion THRE)
-		//cola_guardar_eventos(EV_UART0, leido);
+		cola_guardar_eventos(EV_UART0, leido);
 	}
 			
-	VICVectAddr = 0;                      /* Acknowledge Interrupt						 */
+
 }
 
 void uart0_init (void)  {       				/* Initialize Serial Interface       */     
@@ -58,18 +60,17 @@ void uart0_init (void)  {       				/* Initialize Serial Interface       */
 
 /* Escribe una cadena en pantalla    */
 void print (char* cadena)  {
-	disable_isr();	//Desahabilitar para que no interrupa el timer y baje la interrupcion de uart tambien.
+		//Desahabilitar para que no interrupa el timer y baje la interrupcion de uart tambien.
+	disable_isr_fiq();
 	int i = 0;
-	int j = indice_escribir;
 	while (cadena[i] != '\0') {
-		write_buffer[j] = cadena[i];
-		j++;
+		write_buffer[i] = cadena[i];
 		i++;
 	}
-	write_buffer[j] = '\0';
+	write_buffer[i] = '\0';
+	enable_isr_fiq();
 	U0THR = '\n';
-	while(write_buffer[indice_escribir] != '\0')
+	while(write_buffer[0] != '\0')
 		PM_idle();
-	
-	enable_isr();
+		
 }

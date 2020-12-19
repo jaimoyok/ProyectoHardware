@@ -136,7 +136,6 @@ void gestionar_eventos() {
   uint8_t evento = 0;
   uint32_t data = 0;
   uint32_t time = 0;
-	
 	mostrarMenu();
 	print(mostrarTablero());
   while (1) {
