@@ -42,7 +42,7 @@ void uart0_init (void)  {       				/* Initialize Serial Interface       */
 
 	U0FCR = 0x1;													/* Enable FIFO											 */
 
-	PINSEL0 = 0x5;                  			/* Enable RxD0 and TxD0							 */
+	PINSEL0 = PINSEL0 | 0x5;                  			/* Enable RxD0 and TxD0							 */
             
   U0LCR = 0x03;                         /* DLAB = 0    											 */
 	U0IER = 0x3;													/* Enable RDA and THRE 							 */
@@ -61,14 +61,12 @@ void uart0_init (void)  {       				/* Initialize Serial Interface       */
 /* Escribe una cadena en pantalla    */
 void print (char* cadena)  {
 		//Desahabilitar para que no interrupa el timer y baje la interrupcion de uart tambien.
-	disable_isr_fiq();
 	int i = 0;
 	while (cadena[i] != '\0') {
 		write_buffer[i] = cadena[i];
 		i++;
 	}
 	write_buffer[i] = '\0';
-	enable_isr_fiq();
 	U0THR = '\n';
 	while(write_buffer[0] != '\0')
 		PM_idle();

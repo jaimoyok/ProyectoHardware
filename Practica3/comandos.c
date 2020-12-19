@@ -24,7 +24,7 @@ void buscar_comando (char leido) {
 						dato = ACABAR_PARTIDA;
 					else if(comando[0] >= '0' & comando[1] >= '0' & comando[2] >= '0' 
 						& comando[0] < '8' & comando[1] < '8' & comando[2] < '8' & checksum())
-						dato = (comando[1] << 8)|comando[0]; //Conversion a formato de evento
+						dato = ((comando[1]-'0') << 8)|(comando[0]-'0'); //Conversion a formato de evento
 					else dato = COMANDO_FALLIDO;
 					}
 				else dato = COMANDO_FALLIDO;

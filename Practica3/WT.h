@@ -2,6 +2,6 @@
 #define __WT__H
 
 void WT_init(int sec);
-void feed_watchdog(void);
+void feed_WT(void);
 
 #endif

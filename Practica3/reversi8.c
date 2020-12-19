@@ -463,7 +463,7 @@ void reversi8_mover_jugador() {
     actualizar_tablero(tablero, fila_seleccionada, columna_seleccionada, FICHA_NEGRA);
     actualizar_candidatas(candidatas, fila_seleccionada, columna_seleccionada);
 }      
-int reversi8_selecionar_movimiento(int fila, int columna){
+int reversi8_seleccionar_movimiento(int fila, int columna){
     if(tablero[fila][columna] != CASILLA_VACIA ) return 0;
     tablero[fila][columna] = MOVIMIENTO;
     fila_seleccionada= fila;

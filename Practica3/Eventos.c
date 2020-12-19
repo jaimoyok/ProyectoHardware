@@ -10,6 +10,8 @@
 #include "timer0.h"
 #include "timer1.h"
 #include "comandos.h"
+#include "WT.h"
+#include "RTC.h"
 
 enum {
   RETARDO = 250, // periodo de alarma
@@ -44,6 +46,8 @@ void iniciarOIreversi() {
   reversi8_iniciar();
   // iniciar contador para la IA
 	uart0_init();
+	RTC_init();
+	WT_init(50);
 }
 
 void aceptar_movimiento() {
@@ -62,17 +66,12 @@ void aceptar_movimiento() {
 }
 
 void controlar_alarmas() {
-  static int alarma_activada = 0;
-  if (usos_timer > 0 &&
-      alarma_activada == 0) { // Numero pulsados > 0 (algo requiere alarma)
-    alarma_activada = 1;
+	static int a =1;
+	if(a){
+		a = 0;
     temporizador_alarma_periodica(RETARDO);
-  } else if (usos_timer == 0 &&
-             alarma_activada ==
-                 1) { // Numero pulsaciones = 0 (no se requiere alarma)
-    alarma_activada = 0;
-    temporizador_desactivar_alarma();
-  }
+	}
+  
 }
 
 // gestiona la pulsacion del boton 0(pin 16)
@@ -154,6 +153,7 @@ void gestionar_eventos() {
 				buscar_comando(data);
 				break;
 			case EV_COMANDO:
+				feed_WT();
         switch (data)
         {
         case PASAR:
@@ -170,36 +170,41 @@ void gestionar_eventos() {
           else print("que dise loko");
           break;
         case ACABAR_PARTIDA:
+					if(state == ACEPTAR) usos_timer--;
           state = FIN;
-          print("Pulse un boton o escriba <!NEW> para empezar otra partida\n");
+          print("Pulse un boton o escriba <#NEW!> para empezar otra partida\n");
           break;
         case NUEVA_PARTIDA:
+					if(state == ACEPTAR) usos_timer--;
           state = INICIO;
           reversi8_iniciar();
           print(mostrarTablero());
           break;
         case COMANDO_FALLIDO:
           //TODO:cambiar
-          print("que dise loko");
+          print("Comando no reconocido\n");
           break;
         default:
           if(state== INICIO){
-            fila = (data >> 8) & 0xFF;
-			      columna = data & 0xFF;
-            break;
+            columna = (data >> 8) & 0xFF;
+			      fila = data & 0xFF;
             if(reversi8_seleccionar_movimiento(fila,columna)){
               state = ACEPTAR;
               usos_timer++;
               cuenta_atras = PERIODOS;
+							print(mostrarTablero());
+							print("Confirme o anule para continuar.\nConfirmacion automatica en 3seg");
             }
             else print("Casilla ocupada\n");
+						 break;
           }
-          else print("Ya has selecionado movimiento, cancelo para introducir otra jugada\n"); 
+          else print("Ya has selecionado movimiento, cancele para introducir otra jugada\n"); 
         }
 			
 					
 				break;
     case EV_BOTON0: {
+			feed_WT();
       gestionar_boton0(1);
       switch (state) {
       case ACEPTAR: {
@@ -224,6 +229,7 @@ void gestionar_eventos() {
       break;
     }
     case EV_BOTON1: {
+			feed_WT();
       gestionar_boton1(1);
       switch (state) {
       case INICIO: {
@@ -266,6 +272,7 @@ void gestionar_eventos() {
         cuenta_atras--;
         if (cuenta_atras == 0) {
           aceptar_movimiento();
+					print(mostrarTablero());
           state = INICIO;
           usos_timer--;
         }
