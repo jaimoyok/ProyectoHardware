@@ -7,4 +7,3 @@ int main(void){
 	gestionar_eventos();
 	return 0;
 }
-

@@ -17,7 +17,7 @@ void RTC_init(void){
 	RTC_reset();
 }
 
-//swi
+
 int RTC_read_time(void){
 	return CTIME0;
 }

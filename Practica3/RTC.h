@@ -2,7 +2,7 @@
 #define __RTC__H
 
 void RTC_init(void);
-int RTC_read_time(void);
 void RTC_reset(void);
-
+int RTC_leer_segundos(void);
+int RTC_leer_minutos(void);
 #endif
