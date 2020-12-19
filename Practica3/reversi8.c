@@ -228,14 +228,14 @@ void mostrarMenu() {
     print("*************************************************");
     print("*****               REVERSI 8               *****");
     print("*************************************************");
-    print("Lista de comandos:");
-    print("\t- #PAS -> Pasar turno");
-    print("\t- #RST -> Finalizar partida");
-    print("\t- #NEW -> Iniciar nueva partida");
-    print("\t- #FCS -> Colocar ficha en la posicion [F,C]");
-    print("Lista de Botones:");
-    print("\t- Boton 0: -> Confirmar movimiento");
-    print("\t- Boton 1: -> Cancelar movimiento\n");
+    print("Comandos:");
+    print("  - #PAS -> Pasar turno");
+    print("  - #RST -> Finalizar partida");
+    print("  - #NEW -> Iniciar nueva partida");
+    print("  - #FCS -> Colocar ficha en la posicion [F,C]");
+    print("Botones:");
+    print("  - Boton 0: -> Aceptar movimiento");
+    print("  - Boton 1: -> Cancelar movimiento\n");
 }
 
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)

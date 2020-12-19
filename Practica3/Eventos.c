@@ -138,7 +138,7 @@ void gestionar_eventos() {
 	mostrarMenu();
 	print(mostrarTablero());
   while (1) {
-    // comprobamos si hay que encender o aparar la alarma??
+    // comprobamos si hay que encender o parar la alarma??
     controlar_alarmas();
     // esperamos a que exista un evento que procesar
     while (!nuevoEvento()) {
@@ -181,8 +181,7 @@ void gestionar_eventos() {
           print(mostrarTablero());
           break;
         case COMANDO_FALLIDO:
-          //TODO:cambiar
-          print("Comando no reconocido\n");
+          print("Comando invalido\n");
           break;
         default:
           if(state== INICIO){
@@ -213,6 +212,7 @@ void gestionar_eventos() {
         aceptar_movimiento();
         state = INICIO;
         usos_timer--;
+				print(mostrarTablero());
         break;
       }
       case FIN: {
