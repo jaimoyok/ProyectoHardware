@@ -19,11 +19,6 @@ void temporizador1_iniciar(void) {
   T1MCR = 3; // Generates an interrupt and resets the count when the value of
              // MR0 is reached
   T1TCR = 1; // Timer1 Enable
-
-  // configuration of the IRQ slot number 1 of the VIC for Timer 1 Interrupt // set interrupt vector in 1
-
-  // 0x20 bit 5 enables vectored IRQs.
-  // 5 is the number of the interrupt assigned. Number 5 is the Timer 1
 }
 
 // inicia el contador principal

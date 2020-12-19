@@ -21,7 +21,6 @@ void timer0_ISR (void) __irq;    // Generate Interrupt
 /* Setup the Timer Counter 0 Interrupt */
 void temporizador0_iniciar (void) {
 		VPBDIV |= 1;
-		timer0_int_count = 0;
 	// configuration of Timer 0
 		T0MR0 = 59999;
     //T0MR0 = 2999990;                       // Interrumpe cada 1ms

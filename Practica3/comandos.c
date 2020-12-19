@@ -3,7 +3,7 @@
 
 static char comando[DIM_COMANDO];
 
-int checsum(){
+int checksum(){
 	return(comando[0]-'0'+ comando[1]-'0')%8 == comando[2]-'0';
 }
 

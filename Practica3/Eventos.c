@@ -3,6 +3,7 @@
 #include "Power_management.h"
 #include "boton_eint0.h"
 #include "boton_eint1.h"
+#include "UART0.h"
 #include "cola.h"
 #include "reversi8.h"
 #include "stdint.h"
@@ -42,6 +43,7 @@ void iniciarOIreversi() {
   // iniciar juego
   reversi8_iniciar();
   // iniciar contador para la IA
+	uart0_init();
 }
 
 void aceptar_movimiento() {
@@ -134,7 +136,9 @@ void gestionar_eventos() {
   uint8_t evento = 0;
   uint32_t data = 0;
   uint32_t time = 0;
-	char comando[DIM_COMANDO];
+	
+	mostrarMenu();
+	print(mostrarTablero());
   while (1) {
     // comprobamos si hay que encender o aparar la alarma??
     controlar_alarmas();
@@ -154,12 +158,12 @@ void gestionar_eventos() {
         switch (data)
         {
         case PASAR:
-          if(state = INICIO){
+          if(state == INICIO){
             if (!reversi8_mover_ia()) {
           // Si la IA tambien pasa finaliza la partida.
             state = FIN;
             //tiempoIA = contador(cnt);
-             print(mostrarResultado());
+             print("****Resultados****"/*mostrarResultado()*/);
             }
             else print(mostrarTablero());
           }
@@ -229,7 +233,7 @@ void gestionar_eventos() {
           // Si la IA tambien pasa finaliza la partida.
           state = FIN;
           //tiempoIA = contador(cnt);
-          print(mostrarResultado()) 
+          print("****Resultados****"/*mostrarResultados()*/);
         }
         else print(mostrarTablero());
         break;

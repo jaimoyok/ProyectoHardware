@@ -1,6 +1,7 @@
 #include "stdint.h"
 #include "Eventos.h"
 #include "reversi8.h"
+#include "UART0.h"
 
 // Tama�o del tablero
 enum { DIM=8 };
@@ -209,8 +210,8 @@ char to_ficha(int ficha){
     if(ficha==CASILLA_VACIA)return '-';
     while(1);
 }
-char* mostrarTablero(int8_t tablero[][DIM]){
-    char * cadena;
+char* mostrarTablero(){
+    static char cadena[256];
     int k = 0;
     for(int i = 0; i<DIM; i++){
         for (int j = 0; j<DIM; j++){
@@ -232,10 +233,9 @@ void mostrarMenu() {
     print("\t- #RST -> Finalizar partida");
     print("\t- #NEW -> Iniciar nueva partida");
     print("\t- #FCS -> Colocar ficha en la posicion [F,C]");
-    print("*************************************************");
     print("Lista de Botones:");
     print("\t- Boton 0: -> Confirmar movimiento");
-    print("\t- Boton 1: -> Cancelar movimiento");
+    print("\t- Boton 1: -> Cancelar movimiento\n");
 }
 
 int patron_volteo(int8_t tablero[][DIM], int *longitud, int8_t FA, int8_t CA, int8_t SF, int8_t SC, int8_t color)
@@ -463,7 +463,7 @@ void reversi8_mover_jugador() {
     actualizar_tablero(tablero, fila_seleccionada, columna_seleccionada, FICHA_NEGRA);
     actualizar_candidatas(candidatas, fila_seleccionada, columna_seleccionada);
 }      
-int selecionar_movimiento(int fila, int columna){
+int reversi8_selecionar_movimiento(int fila, int columna){
     if(tablero[fila][columna] != CASILLA_VACIA ) return 0;
     tablero[fila][columna] = MOVIMIENTO;
     fila_seleccionada= fila;
@@ -471,7 +471,7 @@ int selecionar_movimiento(int fila, int columna){
     return 1;
 }
 
-void cancelar_movimiento(){
+void reversi8_cancelar_movimiento(){
     if(tablero[fila_seleccionada][columna_seleccionada] == MOVIMIENTO)
         tablero[fila_seleccionada][columna_seleccionada] = CASILLA_VACIA;
 }

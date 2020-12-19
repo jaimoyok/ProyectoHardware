@@ -1,10 +1,11 @@
 #include <LPC210x.H>                     /* LPC21xx definitions               */
 #include "UART0.h"
 #include "Eventos.h"
-
-#define CR     0x0D
+#include "Power_management.h"
+#include "SWI.h"
 
 static volatile char read_buffer[READ_BUFFER_SIZE];
+
 static int indice_escribir = 0;
 static volatile char write_buffer[WRITE_BUFFER_SIZE];
 
@@ -57,13 +58,18 @@ void uart0_init (void)  {       				/* Initialize Serial Interface       */
 
 /* Escribe una cadena en pantalla    */
 void print (char* cadena)  {
+	disable_isr();	//Desahabilitar para que no interrupa el timer y baje la interrupcion de uart tambien.
 	int i = 0;
 	int j = indice_escribir;
 	while (cadena[i] != '\0') {
-		write_buffer[j] = cadena [i];
+		write_buffer[j] = cadena[i];
 		j++;
 		i++;
 	}
 	write_buffer[j] = '\0';
 	U0THR = '\n';
+	while(write_buffer[indice_escribir] != '\0')
+		PM_idle();
+	
+	enable_isr();
 }

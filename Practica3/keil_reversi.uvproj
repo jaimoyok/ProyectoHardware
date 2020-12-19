@@ -462,11 +462,6 @@
               <FilePath>.\GPIO.c</FilePath>
             </File>
             <File>
-              <FileName>Eventos.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Eventos.c</FilePath>
-            </File>
-            <File>
               <FileName>cola.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\cola.c</FilePath>
@@ -515,6 +510,11 @@
               <FileName>timer1.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer1.c</FilePath>
+            </File>
+            <File>
+              <FileName>Eventos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Eventos.c</FilePath>
             </File>
             <File>
               <FileName>patron_volteo_arm_arm.s</FileName>
@@ -585,11 +585,6 @@
               <FileName>comandos.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\comandos.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_uart0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\test\test_uart0.c</FilePath>
             </File>
             <File>
               <FileName>UART0.h</FileName>
