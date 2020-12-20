@@ -1,5 +1,6 @@
 #include "comandos.h"
 #include "Eventos.h"
+#include "UART0.h"
 
 static char comando[DIM_COMANDO];
 
@@ -8,7 +9,7 @@ int checksum(){
 }
 
 void buscar_comando (char leido) {
-	static int i = 0;
+	static int i = 3;
 	uint32_t dato;
 	switch(leido) {
 		case INICIO_COMANDO:	// Comienzo de un comando '#'
@@ -23,8 +24,15 @@ void buscar_comando (char leido) {
 					else if(comando[0] == 'R' & comando[1] == 'S' & comando[2] == 'T')
 						dato = ACABAR_PARTIDA;
 					else if(comando[0] >= '0' & comando[1] >= '0' & comando[2] >= '0' 
-						& comando[0] < '8' & comando[1] < '8' & comando[2] < '8' & checksum())
-						dato = ((comando[1]-'0') << 8)|(comando[0]-'0'); //Conversion a formato de evento
+						& comando[0] < '8' & comando[1] < '8' & comando[2] < '8'){
+							if(checksum()){
+							dato = ((comando[1]-'0') << 8)|(comando[0]-'0'); //Conversion a formato de evento
+							}
+							else {
+								print("Checksum invalido");
+								dato = COMANDO_FALLIDO;
+							}
+						}
 					else dato = COMANDO_FALLIDO;
 					}
 				else dato = COMANDO_FALLIDO;

@@ -9,8 +9,10 @@ void reversi8_iniciar(void);
 int reversi8_comprobar_movimiento(void);
 int reversi8_seleccionar_movimiento(int fila, int columna);
 void reversi8_cancelar_movimiento(void);
-char* mostrarTablero(void);
+void mostrarTablero(void);
 void mostrarMenu(void);
-
+void reversi8_contar(int *b, int *n);
+int reversi8_mov_blancas(void);
+int reversi8_mov_negras(void);
 #endif
 

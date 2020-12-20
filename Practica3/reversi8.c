@@ -210,7 +210,7 @@ char to_ficha(int ficha){
     if(ficha==CASILLA_VACIA)return '-';
     while(1);
 }
-char* mostrarTablero(){
+void mostrarTablero(){
     static char cadena[256];
     int k = 0;
     for(int i = 0; i<DIM; i++){
@@ -221,7 +221,7 @@ char* mostrarTablero(){
         cadena[k]= '\n';
         k++;
     }
-    return cadena;
+    print (cadena);
 }
 
 void mostrarMenu() {
@@ -369,6 +369,8 @@ int elegir_mov(int8_t candidatas[][DIM], int8_t tablero[][DIM], int8_t *f, int8_
 ////////////////////////////////////////////////////////////////////////////////
 // Cuenta el n�mero de fichas de cada color.
 // Los guarda en la direcci�n b (blancas) y n (negras)
+
+
 void contar(int8_t tablero[][DIM], int *b, int *n)
 {
     int i,j;
@@ -391,6 +393,10 @@ void contar(int8_t tablero[][DIM], int *b, int *n)
             }
         }
     }
+}
+
+void reversi8_contar(int *b, int *n){
+    contar(tablero,b,n);
 }
 
 void actualizar_candidatas(int8_t candidatas[][DIM], int8_t f, int8_t c)
@@ -429,7 +435,6 @@ void actualizar_candidatas(int8_t candidatas[][DIM], int8_t f, int8_t c)
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Proceso principal del juego
 // Utiliza el tablero,
@@ -453,15 +458,28 @@ int8_t __attribute__ ((aligned (8))) candidatas[DIM][DIM] =
         {NO,NO,NO,NO,NO,NO,NO,NO}
 };
 
+static int movimientosB;
+static int movimientosN;
 
 void reversi8_iniciar() {
     init_table(tablero, candidatas);
+    movimientosB = 0;
+    movimientosN = 0;
 }
 
-void reversi8_mover_jugador() {
+int reversi8_mov_blancas(){
+    return movimientosB;
+}
+
+int reversi8_mov_negras(){
+    return movimientosN;
+}
+
+void reversi8_mover_jugador(){
     tablero[fila_seleccionada][columna_seleccionada] = FICHA_NEGRA;
     actualizar_tablero(tablero, fila_seleccionada, columna_seleccionada, FICHA_NEGRA);
     actualizar_candidatas(candidatas, fila_seleccionada, columna_seleccionada);
+    movimientosN++;
 }      
 int reversi8_seleccionar_movimiento(int fila, int columna){
     if(tablero[fila][columna] != CASILLA_VACIA ) return 0;
@@ -489,6 +507,7 @@ int reversi8_mover_ia(){
         actualizar_tablero(tablero, f, c, FICHA_BLANCA);
         actualizar_candidatas(candidatas, f, c);
     }
+    movimientosB++;
     return 1;
    
 }

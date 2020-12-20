@@ -30,7 +30,7 @@ void temporizador1_empezar(void) {
 }
 
 // devuelve el valor actual del contador principal
-unsigned int temporizador1_leer(void) { return T1TC * MAX_TICS + T1PC; };
+unsigned long temporizador1_leer(void) { return T1TC * MAX_TICS + T1PC; };
 
 // para el temporizador y devuelve el valor que toma el contador principañ
 unsigned int temporizador1_parar(void) {
@@ -45,6 +45,6 @@ void timer1_ISR(void) __irq {
   VICVectAddr = 0; // Acknowledge Interrupt
 }
 
-uint32_t __SWI_0 (void) {
+long __SWI_0 (void) {
 	return temporizador1_leer();
 }
