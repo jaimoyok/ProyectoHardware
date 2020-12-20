@@ -1,5 +1,6 @@
 #ifndef __BOTON_EINT1__H
 #define __BOTON_EINT1__H
+
 #include <stdint.h>
 
 void eint1_init (void);

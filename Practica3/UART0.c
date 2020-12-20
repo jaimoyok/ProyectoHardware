@@ -4,9 +4,6 @@
 #include "Power_management.h"
 #include "SWI.h"
 
-
-static volatile char read_buffer[READ_BUFFER_SIZE];
-
 static int indice_escribir = 0;
 static volatile char write_buffer[WRITE_BUFFER_SIZE];
 

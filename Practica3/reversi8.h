@@ -1,8 +1,6 @@
 #ifndef __REVERSI8__H
 #define __REVERSI8__H
 
-#include <stdint.h>
-
 void reversi8_mover_jugador(void);
 int reversi8_mover_ia(void);
 void reversi8_iniciar(void);
@@ -14,5 +12,5 @@ void mostrarMenu(void);
 void reversi8_contar(int *b, int *n);
 int reversi8_mov_blancas(void);
 int reversi8_mov_negras(void);
-#endif
 
+#endif

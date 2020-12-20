@@ -2,7 +2,7 @@
 #define __EVENTOS__H
 
 #include "cola.h"
-#include "stdint.h"
+
 // definicion de eventos
 enum {
   EV_TIMER0 = 0,

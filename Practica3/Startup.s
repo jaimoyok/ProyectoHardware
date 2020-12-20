@@ -181,10 +181,9 @@ IRQ_Handler     B       IRQ_Handler
 ;;FIQ_Handler     B       FIQ_Handler
 	
 		
-		IMPORT timer0_ISR
+		        IMPORT timer0_ISR
 FIQ_Handler  
-		
-		ldr pc,=timer0_ISR
+		        LDR     PC, =timer0_ISR
 
 ; Reset Handler
 

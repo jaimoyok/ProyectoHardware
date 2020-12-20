@@ -7,6 +7,7 @@ void RTC_reset() {
 	SEC = 0;
 	MIN = 0;
 }
+
 void RTC_init(void){
 	// prepara el RTC para que cuente los segundo (calculado para 60 MHz)
 	PREINT = 0x726;

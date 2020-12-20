@@ -1,36 +1,37 @@
 #include "Eventos.h"
 #include "GPIO.h"
 #include "Power_management.h"
+#include "RTC.h"
+#include "UART0.h"
+#include "WT.h"
 #include "boton_eint0.h"
 #include "boton_eint1.h"
-#include "UART0.h"
 #include "cola.h"
+#include "comandos.h"
 #include "reversi8.h"
 #include "stdint.h"
 #include "timer0.h"
 #include "timer1.h"
-#include "comandos.h"
-#include "WT.h"
-#include "RTC.h"
 #include <stdio.h>
 
 enum {
   RETARDO = 250, // periodo de alarma
   PERIODOS = 12  // numero de alarmas que se espera para hacer un movimiento
 };
-                    
+
 static volatile int fila;    // fila seleccionada
 static volatile int columna; // columna seleccionada
 static volatile int ready;
 static volatile int cuenta_atras = PERIODOS; // contador confirmacion
-unsigned long tiempoIA; // guarda los milisegundos que tarda la IA en hacer un movimiento
+unsigned long
+    tiempoIA; // guarda los milisegundos que tarda la IA en hacer un movimiento
 
 typedef enum { no_pulsado = 0, pulsado = 1 } estado_boton_t;
 
 typedef enum { INICIO, ACEPTAR, MOVER, FIN } Estado;
 
-void iniciarOIreversi() {	
-	
+void iniciarOIreversi() {
+
   // activar perifericos
   eint0_init();
   eint1_init();
@@ -44,10 +45,10 @@ void iniciarOIreversi() {
   temporizador1_empezar();
   // iniciar juego
   // iniciar contador para la IA
-	uart0_init();
-	RTC_init();
-	//WT_init(5);
-	WT_init(60);
+  uart0_init();
+  RTC_init();
+  // WT_init(5);
+  WT_init(60);
 }
 
 void aceptar_movimiento() {
@@ -55,9 +56,9 @@ void aceptar_movimiento() {
   if (reversi8_comprobar_movimiento()) {
     // si el movimiento es valido se procesa y la ia juega
     reversi8_mover_jugador();
-		unsigned long aux = clock_gettime(); 
+    unsigned long aux = clock_gettime();
     reversi8_mover_ia();
-    tiempoIA += clock_gettime()-aux;
+    tiempoIA += clock_gettime() - aux;
   } else {
     // si movimiento no valido se activa bit para indicarlo
     reversi8_cancelar_movimiento();
@@ -108,34 +109,35 @@ void gestionar_boton1(uint8_t interrupcion_boton) {
     }
   }
 }
-void iniciarPartida(){
+void iniciarPartida() {
   RTC_reset();
   tiempoIA = 0;
   reversi8_iniciar();
-	print("Vas con negras, empiezas");
+  print("Vas con negras, empiezas!!");
   mostrarTablero();
 }
-void mostrarResultados(char * motivo){
-  //mostrar tiempo
+void mostrarResultados(char *motivo) {
+  // mostrar tiempo
   char str[100];
-  sprintf(str,"Tiempo: %d min %d seg", RTC_leer_minutos(),RTC_leer_segundos());
+  sprintf(str, "Tiempo: %d min %d seg", RTC_leer_minutos(),
+          RTC_leer_segundos());
   print(str);
-  //mostrar movimientos blancas y negras
-  sprintf(str,"Movimientos:\n\tNegras: %d\n\tBlancas: %d",reversi8_mov_negras(),reversi8_mov_blancas());
+  // mostrar movimientos blancas y negras
+  sprintf(str, "Movimientos:\n  Negras: %d\n  Blancas: %d",
+          reversi8_mov_negras(), reversi8_mov_blancas());
   print(str);
-  //mostrar puntuacion blancas y negras
-  int n,b;
-  reversi8_contar(&n,&b);
-  sprintf(str,"Resultado:\t %d:%d", n,b);
+  // mostrar puntuacion blancas y negras
+  int n, b;
+  reversi8_contar(&n, &b);
+  sprintf(str, "Resultado:\t %d:%d", n, b);
   print(str);
-  //tiempo de la ia
-	unsigned int us = tiempoIA/60;
-  sprintf(str,"Tiempo de ejecucion de la IA: %d us",us);
+  // tiempo de la ia
+  unsigned int us = tiempoIA / 60;
+  sprintf(str, "Tiempo de ejecucion IA: %d us", us);
   print(str);
-  //motivo por el que terminas
+  // motivo por el que terminas
   print(motivo);
   print("\n");
-
 }
 // hace parpadear el pin 31
 void gestionar_led() {
@@ -150,76 +152,76 @@ void gestionar_eventos() {
   uint8_t evento = 0;
   uint32_t data = 0;
   uint32_t time = 0;
-	mostrarMenu();
+  mostrarMenu();
   iniciarPartida();
   temporizador_alarma_periodica(RETARDO);
   while (1) {
-    // comprobamos si hay que encender o parar la alarma??
     // esperamos a que exista un evento que procesar
     while (!nuevoEvento()) {
       // si no tenemos que procesar dormimos el procesador
-        PM_idle();
+      PM_idle();
     }
 
     // leemos el siguient evento
     siguienteEvento(&data, &evento, &time);
-    switch (evento) { 
-			case EV_UART0:
-				buscar_comando(data);
-				break;
-			case EV_COMANDO:
-				feed_WT();
-        switch (data)
-        {
-        case PASAR:
-          if(state == INICIO){
-            int aux = clock_gettime();
-            int pasa = !reversi8_mover_ia();
-            tiempoIA += clock_gettime()-aux;
-            if (pasa) {
-             // Si la IA tambien pasa finaliza la partida.
+    switch (evento) {
+    case EV_UART0:
+      buscar_comando(data);
+      break;
+    case EV_COMANDO:
+      feed_WT();
+      switch (data) {
+      case PASAR:
+        if (state == INICIO) {
+          int aux = clock_gettime();
+          int pasa = !reversi8_mover_ia();
+          tiempoIA += clock_gettime() - aux;
+          if (pasa) {
+            // Si la IA tambien pasa finaliza la partida.
             state = FIN;
             mostrarResultados("Han pasado los dos jugadores");
-            }
-						mostrarTablero();
           }
-          //TODO:cambiar
-          else print("que dise loko");
-          break;
-        case ACABAR_PARTIDA:
-          state = FIN;
-          mostrarResultados("Se ha finalizado la partida forzosamente");
-          print("Pulse un boton o escriba <#NEW!> para empezar otra partida\n");
-          break;
-        case NUEVA_PARTIDA:
-					//if(fin){
-          state = INICIO;
-          iniciarPartida();
-				  //}
-          break;
-        case COMANDO_FALLIDO:
-          print("Comando invalido\n");
-          break;
-        default:
-          if(state== INICIO){
-            columna = (data >> 8) & 0xFF;
-			      fila = data & 0xFF;
-            if(reversi8_seleccionar_movimiento(fila,columna)){
-              state = ACEPTAR;
-              cuenta_atras = PERIODOS;
-							mostrarTablero();
-							print("Confirme o anule para continuar.\nConfirmacion automatica en 3seg");
-            }
-            else print("Casilla ocupada\n");
-						 break;
-          }
-          else print("Ya has selecionado movimiento, cancele para introducir otra jugada\n"); 
+          mostrarTablero();
         }
-			
-					
-				break;
+        // TODO:cambiar
+        else
+          print("que dise loko");
+        break;
+      case ACABAR_PARTIDA:
+        state = FIN;
+        mostrarResultados("Partida finalizada de manera forzosa.");
+        print("Pulse un boton o escriba <#NEW!> para empezar una nueva partida\n");
+        break;
+      case NUEVA_PARTIDA:
+        // if(fin){
+        state = INICIO;
+        iniciarPartida();
+        //}
+        break;
+      case COMANDO_FALLIDO:
+        print("Comando invalido\n");
+        break;
+      default:
+        if (state == INICIO) {
+          columna = (data >> 8) & 0xFF;
+          fila = data & 0xFF;
+          if (reversi8_seleccionar_movimiento(fila, columna)) {
+            state = ACEPTAR;
+            cuenta_atras = PERIODOS;
+            mostrarTablero();
+            print("Confirme o cancele movimiento para continuar.\nConfirmacion automatica "
+                  "en 3seg...");
+          } else
+            print("Casilla ocupada\n");
+          break;
+        } else
+          print("Ya has selecionado movimiento, cancele para introducir otra "
+                "jugada\n");
+      }
+
+      break;
     case EV_BOTON0: {
-			feed_WT();
+      feed_WT();
       gestionar_boton0(1);
       switch (state) {
       case ACEPTAR: {
@@ -227,7 +229,7 @@ void gestionar_eventos() {
         // Se coloca la ficha y turno de la IA.
         aceptar_movimiento();
         state = INICIO;
-			  mostrarTablero();
+        mostrarTablero();
         break;
       }
       case FIN: {
@@ -243,22 +245,22 @@ void gestionar_eventos() {
       break;
     }
     case EV_BOTON1: {
-			feed_WT();
+      feed_WT();
       gestionar_boton1(1);
       switch (state) {
       case INICIO: {
-            int aux = clock_gettime();
-            int pasa = !reversi8_mover_ia();
-            tiempoIA += clock_gettime()-aux;
-            if (pasa) {
-             // Si la IA tambien pasa finaliza la partida.
-            state = FIN;
-            mostrarResultados("Han pasado los dos jugadores");
-						print("Pulse un boton o escriba <#NEW!> para empezar otra partida\n");
-            }
-						mostrarTablero();
-						break;
-          }
+        int aux = clock_gettime();
+        int pasa = !reversi8_mover_ia();
+        tiempoIA += clock_gettime() - aux;
+        if (pasa) {
+          // Si la IA tambien pasa finaliza la partida.
+          state = FIN;
+          mostrarResultados("Los dos usuarios han pasado turno.");
+          print("Pulse un boton o escriba <#NEW!> para empezar una nueva partida\n");
+        }
+        mostrarTablero();
+        break;
+      }
         // El jugador ha pasado de turno.
       case ACEPTAR: {
         // Se cancela el movimiento realizado.
@@ -288,7 +290,7 @@ void gestionar_eventos() {
         cuenta_atras--;
         if (cuenta_atras == 0) {
           aceptar_movimiento();
-					mostrarTablero();
+          mostrarTablero();
           state = INICIO;
         }
         break;
