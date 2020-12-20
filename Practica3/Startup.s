@@ -178,8 +178,13 @@ Undef_Handler   B       Undef_Handler
 PAbt_Handler    B       PAbt_Handler
 DAbt_Handler    B       DAbt_Handler
 IRQ_Handler     B       IRQ_Handler
-FIQ_Handler     B       FIQ_Handler
-
+;;FIQ_Handler     B       FIQ_Handler
+	
+		
+		IMPORT timer0_ISR
+FIQ_Handler  
+		
+		ldr pc,=timer0_ISR
 
 ; Reset Handler
 
