@@ -591,11 +591,6 @@
               <FileType>5</FileType>
               <FilePath>.\UART0.h</FilePath>
             </File>
-            <File>
-              <FileName>test_uart0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\test\test_uart0.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
