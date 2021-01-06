@@ -68,13 +68,61 @@ el bit 0 del *Clock Control Register*, además de poner a 0 la cuenta de minutos
 y segundos.
 
 ```c
-	CCR=0x01;
+	CCR = 0x01;
 ```
 
 Para obtener el tiempo transcurrido se hacen funciones `RTC_leer_segundos`
 y `RTC_leer_minutos` que se encarga de leer del registro `CTIME0` los bits 
 correspondientes y devolver el tiempo para cada caso.
 
-## WD
+## Watchdog
 
-Para ... se va a utilizar el otro contador específico, el watchdog (WD) ...
+Por otra parte, otra de las funcionalidades que tiene el juego es que se reinicia
+tras cierto tiempo de inactividad. Para ello, se utiliza el otro contador específico
+del procesador, el watchdog (WD).
+
+Cuando el juego comienza, el Watchdog es iniciado especificándole el número de segundos
+a los que se quiere su reinicio. Para ello, se escribe en el registro *Watchdog Timer Constant* 
+el numero de tics, en función de la frecuencia del procesador. Una vez realizado esto 
+se habilita, se resetea su valor y se alimenta por primera vez para que comience a contar.
+
+Cuando el WD se dispara se activa el segundo bit del *Watchdog Mode register* por lo que
+previamente se comprueba que no este ya disparado, limpiando el bit en caso afirmativo.
+
+```c
+	if( WDMOD & 0x04 )
+		WDMOD &= ~0x04;
+
+	// Time out: Pclk*WDTC*4
+	WDTC  = (60000000 * sec) / 4;
+	WDMOD = 0x03;
+	feed_WT();		
+```	
+
+A partir de ese momento el temporizador se decrementa en cada pulsación de reloj, disparándose cuando su valor llegue a 0. La manera de evitar que se dispare es incrementar su tiempo de cuenta (alimentarlo) haciendo que comience de nuevo.
+
+La manera de alimentar al Watchdog es mediante dos escrituras en el registro WDFEED. Para
+ello se ha creado la función `feed_WT`.
+
+Es de gran importancia destacar que estas escrituras deben ser consecutivas, si no es así
+el correcto funcionamiento del programa se vera alterado. Por tanto es necesario asegurarse
+de que no va a llegar ninguna interrupción entre medio. Esto se consigue desactivando todo 
+tipo de interrupción antes de las escrituras y activandolas de nuevo después. Para hacerlo 
+se hará uso de las funciones `disable_isr_fiq` y `enable_isr_fiq` mencionadas anteriormente.
+
+```c
+    disable_isr_fiq();
+	WDFEED = 0xAA;						   
+ 	WDFEED = 0x55;
+	enable_isr_fiq();	
+```
+
+Durante el transcurso del juego el encargado de alimentar el WD es el gestor de eventos,
+que lo hará cuando el jugador muestra algún tipo de actividad, ya sea la escritura de 
+un nuevo comando o la pulsación de cualquiera de los dos botones. Si no se realiza ningún 
+movimiento el contador continua decrementandose hasta llegar al final provocando que el
+procesador se resetee.
+
+También es una manera de evitar que en caso de fallo el procesador se quede bloqueado, ya que si
+esta colgado el jugador no puede hacer nada, por lo que no será alimentado y también se
+reseteará.
