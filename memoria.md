@@ -34,6 +34,40 @@ Algunas partes del código serán desarrolladas en lenguaje `ARM` y otras en `c`
 ## Gestión de los eventos
 ### Máquina de estados
 ## Comandos
+
+La librería `comandos` consta de una única función `buscar_comando` la cuál
+es llamada por el gestor de eventos cuando recibe un evento de tipo `EV_UART0`. 
+Este es generado por la linea de serie (UART0) cuando recibe datos.
+
+Como su nombre indica, su tarea es la de comprobar si se ha introducido algún 
+comando, además de validarlo y procesarlo en caso de que sea correcto. Un comando 
+consta de un delimitador de inicio (#) y un delimitador de fin (!).
+
+Los comando válidos son los siguientes:
+
+* Pasar: #PAS!
+* Acabar la partida: #RST!
+* Nueva partida:#NEW!
+* Jugada: #FCS!
+
+La función va recibiendo los caracteres uno a uno, y cuando uno de ellos se 
+trata del delimitador de inicio la función guardara los siguientes caracteres
+en un pequeño *buffer* hasta que se encuentre el delimitador de fin. Esto 
+significará que un comando ha llegado, pero es necesario validarlo antes de nada.
+
+Para que un comando sea válido tiene que tener una longitud de tres. Además debe 
+coincidir con alguno de los nombrados previamente: `PAS`, `RST`,  `NEW` o `FCS`. 
+En caso de tratarse de alguno de los tres primeros ya se puede considerar válido, 
+por lo que se puede enviar un evento `EV_COMANDO` con la información necesaria.
+
+Sino, si se trata de una jugada, habrá que comprobar también que la fila 
+y la columna respetan las dimensiones del tablero además del *checksum*: 
+$$(F + V) \mod 8 = S$$ En ese caso se generara de nuevo un `EV_COMANDO`
+donde se indique la posición de la ficha a colocar.
+
+Si un comando no es válido, se vacía el *buffer* y se manda otro evento con la
+información necesaria para que la linea de serie muestre un mensaje de aviso en pantalla.
+
 ## Power Management
 ## Modificaciones Reversi8
     * Utilizacion del ARM_ARM
