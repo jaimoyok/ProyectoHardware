@@ -92,6 +92,7 @@ El botón EINT1 (conectado al pin 14) indicará que el usuario pasa o cancela el
 
 ## Temporizadores
 ### TIMER0
+Tratado como fast interrupt, explicar FIQ_handler del startup
 ### TIMER1
 ## GPIO
 
@@ -165,7 +166,63 @@ información necesaria para que la linea de serie muestre un mensaje de aviso en
 ## Modificaciones Startup
 ## RTC
 ## SWI
-    * TODO: Aumentar el valor de la tabla que nos dijo para que no desborde
+
+Durante la ejecución del programa, el procesador --de arquitectura ARM-- se encuentra 
+en modo usuario, esto provoca que en momentos concretos surjan algunas limitaciones y 
+sea necesario cambiar a un modo con mas permisos, como el supervisor. Un ejemplo es 
+el de las llamadas al sistema operativo, las cuales solo pueden ser invocadas desde 
+este modo ya que están restringidas al resto.
+
+Para el diseño del juego se han implementado 5 llamadas al sistema. Una para leer
+marcas temporales y cuatro para gestionar las interrupciones. Estas últimas permiten 
+habilitar y deshabilitar las IRQ y FIQ, pudiendo así realizar operaciones en exclusión,
+como "alimentar" al Watchdog.
+
+Para cambiar de modo y poder emplear los servicios del sistema operativo se hace uso
+de la instrucción SWI seguida del número de servicio al que va a corresponder esa llamada.
+
+El acceso al tiempo del `TIMER1` se realiza vía llamada al sistema con número de servicio 0.
+Para ello se implementa la función `clock_gettime` en lenguaje c declarada en `timer1.h` e incorporada 
+al vector de interrupciones.
+
+```c
+unsigned long __swi(0) clock_gettime(void);
+```
+
+Para la implementación de las otras llamadas, se asume que no hay mas espacio en el vector de
+interrupciones, por lo tanto son implementadas en la propia rutina de servicio de SWI.
+
+Cuando se invoca una de ellas, SWI causa una interrupción provocando la entrada a la rutina de
+servicio y el cambio a modo supervisor. Después se guarda la información de estado del usuario en
+el SPSR y se extrae el número de servicio de la llamada al sistema que ha provocado la interrupción, pudiendo así identificarla y tratar a cada una de manera individual dentro de la ISR.
+
+```c
+                CMP     R12,#0xFF              
+                BEQ     __enable_isr
+                CMP     R12,#0xFE              
+                BEQ     __disable_isr
+                CMP     R12,#0xFD      
+``` 
+
+Por ejemplo la llamada `__disable_isr` se encarga de deshabilitar las IRQ, para ello modifica el SPSR guardado anteriormente escribiendo en el bit de las IRQ para luego restaurar el modo usuario con el nuevo estado. De igual manera funcionan las FIQ.
+
+```c
+__disable_isr
+                LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
+                ORR     R12, R12, #I_Bit       ; Disable IRQ
+                MSR     SPSR_cxsf, R12         ; Set SPSR
+                LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
+```
+
+Para trabajar con interrupciones FIQ que hacen llamadas a funciones, es muy importante 
+tener espacio suficiente reservado a la pila de *Fast interrupt request* ya que si no
+es así puede surgir un desbordamiento de memoria. Para esto basta con asignar valor a 
+la siguiente posición en el `Startup.s`.
+
+```c
+FIQ_Stack_Size  EQU     0x00000080
+```
+
 ## UART0
 ## RTC
 

@@ -72,13 +72,13 @@ SWI_End
 
 __enable_isr
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
-                BIC     R12, R12, #I_Bit       ; Disable IRQ
+                BIC     R12, R12, #I_Bit       ; Enable IRQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
 __disable_isr
                 LDMFD   SP!, {R8, R12}         ; Load R8, SPSR
-                ORR     R12, R12, #I_Bit       ; Enable IRQ
+                ORR     R12, R12, #I_Bit       ; Disable IRQ
                 MSR     SPSR_cxsf, R12         ; Set SPSR
                 LDMFD   SP!, {R12, PC}^        ; Restore R12 and Return
 
