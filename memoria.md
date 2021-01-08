@@ -30,6 +30,33 @@ Algunas partes del código serán desarrolladas en lenguaje `ARM` y otras en `c`
 ### TIMER0
 ### TIMER1
 ## GPIO
+
+El *General Purpose Input/Output* (GPIO) es un puerto que permite conectar al chip
+elementos de E/S. Esta formado por un puerto de 32 bits donde cada uno de ellos 
+representa un pin totalmente independiente, que con la ayuda de una mascara puede
+ser utilizado para emular diferentes periféricos como botones y leds.
+
+Para su manipulación el GPIO cuenta con 4 registros: `IOPIN`, que muestra el estado de 
+los pines en cada momento, si están activados o no. `IOSET` e `IOCLR` para controlar el
+estado de los pines y modificar el valor de estos. En el primero, escribiendo un uno 
+en cualquiera de los 32 bits se puede activar el pin correspondiente. Por otro 
+lado, `IOCLR`, tiene el efecto contrario, mediante la escritura en él se pueden desactivar
+cualquiera de los pines. Finalmente, `IODIR` permite indicar el modo de funcionamiento de
+ellos, entrada o salida.
+
+Para trabajar con él se implementan una serie de funciones que permiten realizar las 
+operaciones necesarias de manera mas cómoda. Contará con una función `GPIO_leer` para
+consultar el valor de unos pines concretos y `GPIO_escribir` para modificar el valor 
+de estos, ambas permitiran su uso en formato decimal.
+
+Además se crearán otras dos funciones `GPIO_marcar_entrada` y `GPIO_marcar_salida` para
+establecer el modo de funcionamiento de cada pin. En este caso entrada para los botones y
+salida para los leds.
+
+Finalmente y como se explicará mas adelante, la función que tiene cada pin y el 
+periférico al que corresponde puede ser especificado con ayuda del registro de control 
+`PINSEL0`.
+
 ## Cola de eventos
 ## Gestión de los eventos
 ### Máquina de estados
@@ -111,7 +138,7 @@ correspondientes y devolver el tiempo para cada caso.
 
 ## Watchdog
 
-Por otra parte, otra de las funcionalidades que tiene el juego es que se reinicia
+Otra de las funcionalidades que tiene el juego es que se reinicia
 tras cierto tiempo de inactividad. Para ello, se utiliza el otro contador específico
 del procesador, el watchdog (WD).
 
