@@ -18,14 +18,78 @@ documentclass: scrartcl
 
 # Introducción
 
-En este documento se presenta la memoria técnica correspondiente a las prácticas 2 y 3 de la asignatura Proyecto Hardware. A lo largo del documento se detalla el proceso de implementación del conocido juego Reversi. Partiendo del proyecto en lenguaje c previamente optimizado en la práctica 1 se realizan una serie de modificaciones y adaptaciones, añadiendo nuevas funcionalidades y permitiendo que este pueda ser ejecutado en un emulador de máquina real con sus periféricos, como pueden ser botones, leds, teclado, pantalla, etc. 
+En este documento se presenta la memoria técnica correspondiente a las prácticas 2 y 3 de
+la asignatura Proyecto Hardware. A lo largo del documento se detalla el proceso de implementación
+del conocido juego Reversi. Partiendo del proyecto en lenguaje c previamente optimizado en 
+la práctica 1 se realizan una serie de modificaciones y adaptaciones, añadiendo nuevas 
+funcionalidades y permitiendo que este pueda ser ejecutado en un emulador de máquina
+real con sus periféricos, como pueden ser botones, leds, teclado, pantalla, etc. 
 
-Algunas partes del código serán desarrolladas en lenguaje `ARM` y otras en `c` para finalmente ser todo ello ejecutado con la ayuda de un emulador del procesador *ARM LPC2105*. El entorno de desarrollo empleado es *uVision IDE*.
+Algunas partes del código serán desarrolladas en lenguaje `ARM` y otras en `c` para finalmente
+ser todo ello ejecutado con la ayuda de un emulador del procesador *ARM LPC2105*. El entorno 
+de desarrollo empleado es *uVision IDE*.
 
 # Librerias
-## Botones
-### EINT0
-### EINT1
+## Botones (EINT0, EINT1)
+
+Para simular los botones del juego se emplean dos de las líneas de interrupción externas con 
+las que cuenta el chip: `EINT0` y `EINT1`. Estas permiten interaccionar al procesador con 
+dispositivos de E/S. Para usarlas hay que conectarlas a los pines del sistema (GPIO). 
+
+Para establecer la función de los pines, el procesador incluye los registros `PINSEL0` y `PINSEL1`,
+los cuales son configurados al comienzo de la partida.
+
+Al botón `EINT0` le corresponde el pin 16 (P0.16), para conectarlo se le da un valor de 1 a 
+los bits 1:0 de `PINSEL1`.
+
+```c
+  PINSEL1 = PINSEL1 & 0xfffffffC; // Se limpian los bits 1:0
+  PINSEL1 = PINSEL1 | 1;          // 01 en los bits 1:0 para EINT0
+```
+
+Por otro lado, para conectar el botón `EINT1` con el P0.14 se da un valor de 2 a los bits 29:28 de `PINSEL0`.
+
+```c
+  PINSEL0 = PINSEL0 & 0xcfffffff; // Se Limpian los bits 29:28
+  PINSEL0 = PINSEL0 | 0x20000000; // 10 en los bits 29:28 para EINT1
+```
+
+Además, para que estas interrupciones puedan llegar es necesario habilitarlas en el vector
+de IRQs, para ello se cuenta con `VicVectEnable`.
+
+La `EINT0` corresponde con la interrupción número 14 
+
+```c
+  VICVectCntl2 = 0x20 | 14;
+  VICIntEnable = VICIntEnable | 0x00004000; // Enable EXTINT0 Interrupt
+```
+
+y la `EINT1` con la interrupción número 15
+
+```c
+  VICVectCntl3 = 0x20 | 15;
+  VICIntEnable = VICIntEnable | 0x00008000; // Enable EXTINT1 Interrupt
+```
+
+Las interrupciones se activan por nivel y son activas a baja: es decir que si hay 
+un cero se activa la solicitud de interrupción a la que se ha conectada ese pin. 
+
+Cuando una de las dos interrupciones llega --un botón se ha pulsado--, el programa 
+entra en la rutina de servicio que se le ha especificado en el `VicVectAddr`. En 
+ese momento, indica al gestor el evento que ha sucedido mediante el envío de un `EV_BOTON`, no
+sin antes deshabilitar la interrupción externa correspondiente en el VIC, para 
+evitar que interrumpa de nuevo mientras no haya terminado la gestión de la pulsación.
+
+Como las interrupciones son muy rápidas y un botón puede estar bastante tiempo
+presionado, si no se hace algo una misma pulsación puede generar multitud de 
+interrupciones. Por evitarlo la cola de eventos deberá encargarse de comprobar
+si una interrupción se trata de una nueva pulsación o de un botón que se mantiene
+pulsado. Para ello se facilitan las funciones `eint_esta_pulsado`, `eint1_read_nueva_pulsacion` y `eint0_clear_nueva_pulsacion`.
+
+El botón EINT0 (conectado al pin 16) indicará que el usuario ha introducido un nuevo movimiento.
+
+El botón EINT1 (conectado al pin 14) indicará que el usuario pasa o cancela el movimiento realizado, si se pulsa antes de que pasen 3 segundos.
+
 ## Temporizadores
 ### TIMER0
 ### TIMER1
