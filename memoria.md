@@ -124,7 +124,60 @@ periférico al que corresponde puede ser especificado con ayuda del registro de 
 
 ## Cola de eventos
 ## Gestión de los eventos
-### Máquina de estados
+
+![Máquina de estados](Automata.png)
+
+Tras iniciar todos los periféricos, se invoca a la función `gestionar_eventos`
+que va a ser la encargada de gestionar todo lo que suceda, mandando las ordenes 
+necesarias a cada uno de los componentes en el momento oportuno.
+
+En la Figure 1 se puede observar el autómata. Está formado por tres estados: `INICIO`,
+`ACEPTACION` y `FIN`.
+
+Al comienzo del juego se parte del estado `INICIO`, se muestra el menú con los 
+distintos comandos, también se reinicia el `RTC` y se imprime el tablero inicial.
+Además se activa un temporizador que genera interrupciones de manera periódica.
+
+Después, se comprueba el estado de la cola y si no hay ningún evento pendiente se duerme
+el chip para ahorrar energía. Si lo hay, se extrae para procesarlo.
+
+Cuando llega un evento `EV_UART0` --escritura en `UART0`--, el planificador llama a
+`buscar_comando` que se encarga de ver si lo escrito es un comando o no. En caso afirmativo
+la función genera un evento `EV_COMANDO`.
+
+`EV_COMANDO` va acompañado de información acerca del comando del que se trata, además de
+la fila y columna si se trata un nuevo movimiento.
+
+Si estando en el estado `INICIO` se pulsa el botón `EINT1` o se introduce el comando `#PAS!`
+el usuario pasa de turno, manteniéndose en el mismo estado. Si la IA realiza un movimiento, 
+se procesa, se calcula tiempo que le ha llevado y se muestra el resultado. En caso contrario,
+si la IA también pasa, se termina la partida cambiando al estado `FIN` a la espera de una
+nueva instrucción.
+
+Por otro lado, también en el estado `INICIO`, si se introduce un movimiento -- `#FCS!` en la
+linea de serie-- y es válido se pasa al estado `ACEPTAR` quedando a espera de confirmación.
+Si esta llega, ya sea mediante el botón `EINTO` o el trascurso de 3 segundos se lleva a cabo
+el movimiento y se vuelve al estado `INICIO` con turno para la IA. Si no es así, y antes de 
+que pasen los 3 segundos se pulsa el botón `EINT1` se cancela el movimiento y se vuelve de
+nuevo al `INICIO` para introducir otro nuevo o pasar.
+
+Cuando el estado es `FIN` y se pulsa cualquier botón, `EINT0` o `EINT1`, se vuelve al estado inicial (`INICIO`).
+
+Cada vez que llega un evento de botón o de comando se alimenta el `Watchdog`, indicando que hay 
+actividad.
+
+Como se ha mencionado anteriormente hay un temporizador que genera de manera periódica
+eventos `EV_TIMER0`. Cuando uno de estos llega se trata el estado de los botones --si siguen
+pulsados o no--. Además, si la cuenta atrás de confirmación --3 segundos para la confirmación
+del movimiento-- está activa, este evento es el encargado de decrementar su valor y procesar
+el movimiento cuando finalice.
+
+Por último, si en cualquier estado se introduce el comando `#NEW!` o `#RST!` se vuelve al estado
+inicial.
+
+NOTA: Estos dos últimos comandos no se entendieron de la misma manera que se especifico más tarde
+en la Wiki.
+
 ## Comandos
 
 La librería `comandos` consta de una única función `buscar_comando` la cuál
