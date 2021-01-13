@@ -30,8 +30,8 @@ void temporizador0_iniciar (void) {
 		VICVectAddr0 = (unsigned long)timer0_ISR;          // set interrupt vector in 0
     // 0x20 bit 5 enables vectored IRQs.
 		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0
-		//VICIntSelect = VICIntSelect | 0x00000010;
-		VICVectCntl0 = 0x20 | 4;
+		VICIntSelect = VICIntSelect | 0x00000010;
+		//VICVectCntl0 = 0x20 | 4;
     VICIntEnable = VICIntEnable | 0x00000010; // Enable Timer0 Interrupt
 	
 }
