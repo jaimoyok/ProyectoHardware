@@ -76,7 +76,7 @@ un cero se activa la solicitud de interrupción a la que se ha conectada ese pin
 
 Cuando una de las dos interrupciones llega --un botón se ha pulsado--, el programa 
 entra en la rutina de servicio que se le ha especificado en el `VicVectAddr`. En 
-ese momento, indica al gestor el evento que ha sucedido mediante el envío de un `EV_BOTON`, no
+ese momento, indica al gestor que el evento que ha sucedido mediante el envío de un `EV_BOTON`, no
 sin antes deshabilitar la interrupción externa correspondiente en el VIC, para 
 evitar que interrumpa de nuevo mientras no haya terminado la gestión de la pulsación.
 
@@ -91,15 +91,16 @@ El botón EINT0 (conectado al pin 16) indicará que el usuario ha introducido un
 El botón EINT1 (conectado al pin 14) indicará que el usuario pasa o cancela el movimiento realizado, si se pulsa antes de que pasen 3 segundos.
 
 ## Temporizadores
-Para la gestión temporal se utilizan los dos timers, para su gestión se utilizan las interrupciones rápidas(FIQ), y las llamadas al sistema(SWI). Las interrupciones rápidas permiten priorizar las interrupciones del timer al resto de interrupciones. Por su parte las llamadas al sistema permiten una gestión mas segura del acceso a los registros propios del timer como explicaremos mas adelante.
 
-El funcionamiento de los timers es el siguiente, un registro `PC` aumenta su valor en cada ciclo de reloj, cada vez que este llega a su máximo o al valor especificado en un registro de control `PR`, aumenta el valor del registro `TC`. Dependiendo de como este configurado puede saltar una interrupción al actualizarse `TC`, reseteando este contador.
+Para la gestión temporal se utilizan los dos timers, los cuales utilizan las interrupciones rápidas (FIQ), y las llamadas al sistema (SWI). Las interrupciones rápidas permiten priorizar las interrupciones del timer al resto de interrupciones. Por su parte las llamadas al sistema permiten una gestión mas segura del acceso a los registros propios del timer como explicaremos mas adelante.
 
-La frecuencia a la que trabajan los timer por defecto es un cuarto de la frecuencia del procesador pero en este caso se configuran para que vayan a la misma frecuencia. Esto se consigue modificando el registro VPBDIV, poniendo a uno su primer bit.
+El funcionamiento de los timers es el siguiente, un registro `PC` aumenta su valor en cada ciclo de reloj, cada vez que este llega a su máximo o al valor especificado en un registro de control `PR` aumenta el valor del registro `TC`. Dependiendo de como este configurado puede saltar una interrupción al actualizarse `TC`, reseteando este contador.
+
+La frecuencia a la que trabajan los timers por defecto es un cuarto de la frecuencia del procesador, pero en este caso se configuran para que vayan a la misma frecuencia. Esto se consigue modificando el registro `VPBDIV`, poniendo a uno su primer bit.
 
 
 ### TIMER0
-  Para indicar que la interrupción del timer debe gestionarse como FIQ se actualiza el vector control de la FIQ y de las IRQ, activando el bit de interrupción de timer. 
+  Para indicar que la interrupción del timer debe gestionarse como `FIQ` se actualiza el vector control de la `FIQ` y de las `IRQ`, activando el bit de interrupción de timer. 
 
   ```c
   VICIntSelect = VICIntSelect | 0x00000010;
@@ -109,14 +110,18 @@ La frecuencia a la que trabajan los timer por defecto es un cuarto de la frecuen
 
   ```c
   T0MR0 = 59999;  // Interrumpe cada 1ms
-  T0MCR = 3;      // Generates an interrupt and resets the count when the value of MR0 is reached
+  T0MCR = 3;      // Generates an interrupt and resets the count when
+                  // the value of MR0 is reached
   T0TCR = 1;      // Timer0 Enable
   ```
   Las FIQ no tienen de por si un vector de interrupciones, se ha de gestionar desde el `Startup.s`, al solo utilizar una FIQ siempre se llamara a la IRQ del timer pero si mas periféricos utilizaran esta forma de interrupción se debería llamar a las distintas funciones en función de la FIQ.
-   ```c
+
+  ```c
     IMPORT timer0_ISR
-  FIQ_Handler  
-		        LDR     PC, =timer0_ISR
+
+  FIQ_Handler
+
+		LDR   PC, =timer0_ISR
   ```
   Por ultimo se debe aumentar el tamaño de la pila en el modo FIQ, para evitar problemas con el solapamiento de pilas entre modos.
 
@@ -124,8 +129,8 @@ La frecuencia a la que trabajan los timer por defecto es un cuarto de la frecuen
 
 ### TIMER1
 
-El timer1 es usado para un calculo de tiempos preciso, teniendo una precisión de $\frac {1}{60}$ de microsegundo, esto es gracias a que accede directamente a los registros del timer en vez de contar el numero de interrupciones que se producen.
-Para utilizar el timer indicamos en `PR` el máximo posible, reseteamos y activamos los contadores
+El `timer1` es usado para un calculo de tiempos preciso, teniendo una precisión de $\frac {1}{60}$ de microsegundo, esto es gracias a que accede directamente a los registros del timer en vez de contar el número de interrupciones que se producen.
+Para utilizar el timer se indica en `PR` el máximo posible, se resetea y se activan los contadores
 ```c
 // configuration of Timer 1
 T1PR= MAX_TICS -1;
@@ -133,12 +138,13 @@ T1MCR = 3; // Generates an interrupt and resets the count when the value of
 T1TCR = 1; // Timer1 Enable
 ```
 
-Para acceder a la cuenta interna se utiliza una llamada al sistema `clock_gettime` , como se explica posteriormente, la cual simplemente llama a temporizador1_leer.
+Para acceder a la cuenta interna se utiliza una llamada al sistema `clock_gettime` , como se explica posteriormente, la cual simplemente llama a `temporizador1_leer`.
 
 ```c
 unsigned long temporizador1_leer(void) { return T1TC * MAX_TICS + T1PC; };
 ```
-MAX_TICS es igual a 2³², el valor máximo de un registro de 32 bits, sumado el registro `TC` y `PC` tenemos suficiente espacio para guardar el tiempo de ejecución completo, en caso de esto no ser así se podría crear una IRQ que saltase cada vez que ambos registros lleguen al máximo.
+
+`MAX_TICS` es igual a 2³², el valor máximo de un registro de 32 bits, sumado el registro `TC` y `PC` tenemos suficiente espacio para guardar el tiempo de ejecución completo, en caso de esto no ser así se podría crear una `IRQ` que saltase cada vez que ambos registros lleguen al máximo.
 
 ## GPIO
 
@@ -169,7 +175,8 @@ periférico al que corresponde puede ser especificado con ayuda del registro de 
 `PINSEL0`.
 
 ## Cola de eventos
-Para gestionar las distintas interrupciones estas generan eventos que se guardan el esta estructura y son leídos posteriormente por el gestor de eventos para su procesamiento. 
+
+Para gestionar las distintas interrupciones, se guardan en la estructura los eventos que estas generan para ser leídos posteriormente por el gestor de eventos para su procesamiento. 
 
 Un evento esta compuesto por 8 bits para indicar el tipo de evento y 24 bits para guardar datos sobre el evento. En la cola se guarda junto una marca de tiempo. 
 
@@ -195,6 +202,9 @@ typedef struct {
   size_t head, tail, n;
 } cola_t;
 ```
+
+Al utilizar dos variables distintas para acceder a la cola no existe riesgo de sobrescribir
+o dejar en blanco algún elemento de la cola, evitando así cualquier condición de carrera.
 
 ## Gestión de los eventos
 
@@ -314,7 +324,7 @@ Para integrar el juego este se ha dividido en funciones, que hacen por separado 
 * `int reversi8_mover_ia(void)` : la ia hace un movimiento si puede y devuelve 1, si no devuelve 0.
 * `void reversi8_iniciar(void)` : inicia una partida reseteando el tablero.
 * `int reversi8_comprobar_movimiento(void)` : devuelve 1 si el movimiento seleccionado es valido, si no devuelve 0. 
-* `int reversi8_seleccionar_movimiento(int fila, int columna)` : selecciona un movimiento si la casilla <fila, columna> esta vacía y devuelve 1, si no devuelve 0.
+* `int reversi8_seleccionar_movimiento(int fila, int columna)` : selecciona un movimiento si la casilla <fila, columna> esta vacía y devuelve 1, sino devuelve 0.
 * `void reversi8_cancelar_movimiento(void)` : cancela el movimiento seleccionado
 * `void mostrarTablero(void)` : imprime el tablero en pantalla.
 * `void mostrarMenu(void)` : Muestra el funcionamiento del juego.
@@ -452,6 +462,7 @@ FIQ_Stack_Size  EQU     0x00000080
 
 ## UART0
 El sistema de entrada y salida de caracteres se basa en tres registros:
+
 * `IIR` : donde se informa de los procesos que se dan en la salida y entrada de caracteres.
 * `THR` : registro de salida de caracteres.
 * `RBR` : registro de entrada de caracteres.
