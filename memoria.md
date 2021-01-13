@@ -277,6 +277,7 @@ Los comando válidos son los siguientes:
 * Acabar la partida: #RST!
 * Nueva partida:#NEW!
 * Jugada: #FCS!
+* Repetir último comando: !  (Funcionalidad extra añadida)
 
 La función va recibiendo los caracteres uno a uno, y cuando uno de ellos se 
 trata del delimitador de inicio la función guardara los siguientes caracteres
